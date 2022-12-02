@@ -127,11 +127,11 @@ namespace DahlDesign.Plugin.Categories
             }
                         
             //Delta sensitivity
-            if (Base.iRacing.trackType == 0)
+            if (Base.iRacing.propTrackType == 0)
             {
                 DeltaBarSensitivity = Base.Settings.DeltaRoadSensitivity;
             }
-            else if (Base.iRacing.trackType < 5)
+            else if (Base.iRacing.propTrackType < 5)
             {
                 DeltaBarSensitivity = Base.Settings.DeltaRallySensitivity;
             }

@@ -12,21 +12,188 @@ namespace DahlDesign.Plugin.iRacing
         private readonly DahlDesign Base;
         iRacingSpotter iRacingSpotter = new iRacingSpotter();
         iRacing.Properties p;
-        
+
+
         #region Variables
 
         //CSV file adress
         string csvAdress = "";
         int csvIndex = 0;
 
+        // iRacing variables
+        TimeSpan globalClock;
+        int incidents;
+        int pitStall;
+        bool boost;
+        int MGU;
+        double battery;
+        int DRSState;
+        double slipLF;
+        double slipRF;
+        double slipLR;
+        double slipRR;
+        double trackPosition;
+        int completedLaps;
+        int currentLap;
+        int totalLaps;
+        TimeSpan currentLapTime;
+        int pit;
+        int pitLimiter;
+        string gear;
+        double fuelAvgLap;
+        int black;
+        int white;
+        int checkered;
+        TimeSpan lastLapTime;
+        string carModel;
+        string track;
+        string session;
+        TimeSpan timeLeft;
+        double pitLocation;
+        double trackLength;
+        double defaultRevLim;
+        int pitSpeedLimit;
+        int ERSlimit;
+        int sessionNumber;
+        string trackConfig;
+        int greenFlag;
+        bool TCswitch;
+        bool ABSswitch;
+        int ABS;
+        int TC;
+        int surface;
+        double stintLength;
+        int opponents;
+        int classOpponents;
+        double fuel;
+        int sessionState;
+        int trackLocation;
+        double wingFront;
+        double wingRear;
+        int tape;
+        float[] BestLapTimes;
+        int PWS;
+        double gearRatio;
+        bool onJokerLap;
+        int myCarIdx;
+        bool furled;
+        double LRShockVel;
+        double RRShockVel;
+        TimeSpan estimatedLapTime;
+        string myClass;
+        int myPosition;
+        double throttle;
+        double brake;
+        double clutch;
+        double speed;
+        double rpm;
+        double plannedFuel;
+        double maxFuel;
+        int cam;
+        int pitInfo;
+
+
+
+
+        // iRacing variables
+        TimeSpan globalClock;
+        int incidents;
+        int pitStall;
+        bool boost;
+        int MGU;
+        double battery;
+        int DRSState;
+        double slipLF;
+        double slipRF;
+        double slipLR;
+        double slipRR;
+        double trackPosition;
+        int completedLaps;
+        int currentLap;
+        int totalLaps;
+        TimeSpan currentLapTime;
+        int pit;
+        int pitLimiter;
+        string gear;
+        double fuelAvgLap;
+        int black;
+        int white;
+        int checkered;
+        TimeSpan lastLapTime;
+        string carModel;
+        string track;
+        string session;
+        TimeSpan timeLeft;
+        double pitLocation;
+        double trackLength;
+        double defaultRevLim;
+        int pitSpeedLimit;
+        int ERSlimit;
+        int sessionNumber;
+        string trackConfig;
+        int greenFlag;
+        bool TCswitch;
+        bool ABSswitch;
+        int ABS;
+        int TC;
+        int surface;
+        double stintLength;
+        int opponents;
+        int classOpponents;
+        double fuel;
+        int sessionState;
+        int trackLocation;
+        double wingFront;
+        double wingRear;
+        int tape;
+        int PWS;
+        double gearRatio;
+        bool onJokerLap;
+        int myCarIdx;
+        bool furled;
+        double LRShockVel;
+        double RRShockVel;
+        TimeSpan estimatedLapTime;
+        string myClass;
+        int myPosition;
+        double throttle;
+        double brake;
+        double clutch;
+        double speed;
+        double rpm;
+        double plannedFuel;
+        double maxFuel;
+        int cam;
+        int pitInfo;
+
+
+
+
         //Declaring global variables
 
-        string myClassColor = "";
+        double propAccelerationTo100KPH = 0;
+        double propAccelerationTo200KPH = 0;
+        int propHotLapLivePosition = 0;
+        int propERSTarget = 0;
+        int propERSCharges = 0;
+        bool propPitEntry = false;
+        bool propPitSpeeding = false;
+
+        double[,] propLapSectorDelta = new double[7, 5] { {0,0,0,0,0},
+                                                        {0,0,0,0,0},
+                                                        {0,0,0,0,0},
+                                                        {0,0,0,0,0},
+                                                        {0,0,0,0,0},
+                                                        {0,0,0,0,0},
+                                                        {0,0,0,0,0}};
+
+        string propMyClassColor = "";
         int myClassColorIndex = 0;
 
-        double SoF = 0;
+        double propSoF = 0;
         int DRSleft = 0;
-        string DRSpush = "";
+        string propDRSpush = "";
+        string propDRSpush = "";
 
         List<pitOpponents> pitStopOpponents = new List<pitOpponents> { };
         List<pitOpponents> finalList = new List<pitOpponents> { };
@@ -39,7 +206,7 @@ namespace DahlDesign.Plugin.iRacing
         List<List<bool>> realGapLocks = new List<List<bool>> { };
         List<List<bool>> realGapChecks = new List<List<bool>> { };
 
-        int lapStatus = 1;
+        int propLapStatus = 1;
         List<double> lapDeltaCurrent = new List<double> { };
         List<double> lapDeltaLast = new List<double> { };
         List<double> lapDeltaSessionBest = new List<double> { };
@@ -63,11 +230,11 @@ namespace DahlDesign.Plugin.iRacing
         float plannedLRPressure = 0;
         float plannedRRPressure = 0;
 
-        bool overtakeMode = false;
+        bool propOvertakeMode = false;
         int roadOff = 0;
         bool outLap = false;
         double cutoff = 0.02;
-        bool iRIdle = true;
+        bool propIRIdle = true;
         bool statusReadyToFetch = false;
         bool lineCross = false;
 
@@ -81,7 +248,7 @@ namespace DahlDesign.Plugin.iRacing
         double currentSector3Time = 0;
         int currentSector1Status = 0;
         int currentSector2Status = 0;
-        int currentSector3Status = 0;
+        int propCurrentSector3Status = 0;
         int lastSectorStatusHolder = 0;
         int sector1StatusHolder = 0;
         double sector1TimeHolder = 0;
@@ -93,35 +260,35 @@ namespace DahlDesign.Plugin.iRacing
         double oneThird = 1d / 3d;
         double twoThirds = 2d / 3d;
 
-        TimeSpan lapRecord = new TimeSpan(0);
+        TimeSpan propLapRecord = new TimeSpan(0);
         TimeSpan sessionBestLap = new TimeSpan(0);
-        double sessionBestSector1 = 0;
-        double sessionBestSector2 = 0;
-        double sessionBestSector3 = 0;
+        double propSessionBestSector1 = 0;
+        double propSessionBestSector2 = 0;
+        double propSessionBestSector3 = 0;
         double sector1Pace = 0;
         double sector2Pace = 0;
         double sector3Pace = 0;
 
-        int currentTape = 0;
+        int propCurrentTape = 0;
         int currentPWS = 0;
-        double currentFrontWing = 0;
-        double currentRearWing = 0;
+        double propCurrentFrontWing = 0;
+        double propCurrentRearWing = 0;
 
         TimeSpan lastLapHolder;
         TimeSpan lastLapChecker;
         static TimeSpan listFiller = new TimeSpan(0);
-        List<TimeSpan> lapTimeList = new List<TimeSpan> { listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller };
-        List<double> sector1TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-        List<double> sector2TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-        List<double> sector3TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<TimeSpan> propLapTimeList = new List<TimeSpan> { listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller };
+        List<double> propSector1TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<double> propSector2TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<double> propSector3TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
 
         int lastStatusHolder = 0;
-        List<int> lapStatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-        List<int> sector1StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-        List<int> sector2StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-        List<int> sector3StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<int> propLapStatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<int> propSector1StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<int> propSector2StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<int> propSector3StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-        List<double> fuelTargetDeltas = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+        List<double> propFuelTargetDeltas = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
         double fuelTargetDeltaCumulative = 0;
         double fuelTargetDelta = 0;
 
@@ -131,7 +298,7 @@ namespace DahlDesign.Plugin.iRacing
         string carModelHolder = "";
         string trackHolder = "";
         public string sessionHolder { get; set; } = "";
-        bool boxApproach = false;
+        bool propBoxApproach = false;
         List<double?> carAheadGap = new List<double?> { };
         List<double?> carAheadRaceGap = new List<double?> { };
         List<string> carAheadName = new List<string> { };
@@ -177,13 +344,13 @@ namespace DahlDesign.Plugin.iRacing
         List<int> sessionCarsLap = new List<int> { };
         List<int> sessionCarsLapsSincePit = new List<int> { };
 
-        double pitBox = 0;
+        double propPitBox = 0;
         double awayFromPits = 0;
         bool hasPitted = false;
         bool hasApproached = false;
 
-        int validStintLaps = 0;
-        int invalidStintLaps = 0;
+        int propValidStintLaps = 0;
+        int propInvalidStintLaps = 0;
         TimeSpan stintTimer = new TimeSpan(0);
         TimeSpan pushTimer = new TimeSpan(0);
         TimeSpan stintTimeTotal = new TimeSpan(0);
@@ -191,14 +358,14 @@ namespace DahlDesign.Plugin.iRacing
         bool stintLapsCheck = false;
 
         int qualyPosition = 0;
-        bool raceFinished = false;
+        bool propRaceFinished = false;
 
         double? aheadGap = 0;
         string aheadClass = "";
         int aheadClassPosition = 0;
 
-        int realPosition = 0;
-        int hotLapPosition = 0;
+        int propRealPosition = 0;
+        int propHotLapPosition = 0;
         bool isRaceLeader = false;
         List<string> finishedCars = new List<string> { };
 
@@ -211,9 +378,9 @@ namespace DahlDesign.Plugin.iRacing
         bool timedOut = false;
         bool timeBasedChecker = false;
         int? timeLapCounter = 0;
-        bool warmup = false;
-        int qLap1Status = 0;
-        int qLap2Status = 0;
+        bool propWarmup = false;
+        int propQLap1Status = 0;
+        int propQLap2Status = 0;
         TimeSpan qLap1Time = new TimeSpan(0);
         TimeSpan qLap2Time = new TimeSpan(0);
         bool qLapStarted2 = false;
@@ -225,14 +392,14 @@ namespace DahlDesign.Plugin.iRacing
         double? remainingLaps = 0;
 
         int myIR = 0;
-        double IRchange = 0;
+        double propIRchange = 0;
 
-        bool jokerThisLap = false;
-        int jokerLapCount = 0;
+        bool propJokerThisLap = false;
+        int propJokerLapCount = 0;
         bool jokerLapChecker = false;
 
         //Track parameters
-        public int trackType = 0; //Track type: 0 = Road, 1-3 = RX, 4 = Dirt road w/o joker, 5 = Dirt Oval, 6 = Short oval, 7 = oval, 8 = super speedway
+        public int propTrackType = 0; //Track type: 0 = Road, 1-3 = RX, 4 = Dirt road w/o joker, 5 = Dirt Oval, 6 = Short oval, 7 = oval, 8 = super speedway
         bool hasExempt = false;
         double exemptOne = 0;
         double exemptOneMargin = 0;
@@ -250,44 +417,45 @@ namespace DahlDesign.Plugin.iRacing
 
         //Car parameters
         string carId = "";
-        bool hasAntiStall = false;
-        bool hasDRS = false;
+        bool propHasAntiStall = false;
+        bool propHasDRS = false;
         bool hasTCtog = false;
         bool hasTCtimer = false;
         int TCoffPosition = -1;
-        bool hasABS = false;
+        bool propHasABS = false;
+        bool propABStoggle = false;
         bool hasTC = false;
         bool hasABStog = false;
         int ABSoffPosition = -1;
-        int mapHigh = -1;
-        int mapLow = -1;
+        int propMapHigh = -1;
+        int propMapLow = -1;
         bool hasNoBoost = false;
-        bool hasOvertake = false;
-        string rotaryType = "Single";
-        string dashType = "Default";
-        int shiftPoint1 = 0;
-        int shiftPoint2 = 0;
-        int shiftPoint3 = 0;
-        int shiftPoint4 = 0;
-        int shiftPoint5 = 0;
-        int shiftPoint6 = 0;
-        int shiftPoint7 = 0;
-        int currentShiftPoint = 0;
+        bool propHasOvertake = false;
+        string propRotaryType = "Single";
+        string propDashType = "Default";
+        int propShiftPoint1 = 0;
+        int propShiftPoint2 = 0;
+        int propShiftPoint3 = 0;
+        int propShiftPoint4 = 0;
+        int propShiftPoint5 = 0;
+        int propShiftPoint6 = 0;
+        int propShiftPoint7 = 0;
+        int propCurrentShiftPoint = 0;
         double shiftPointAdjustment = 0;
-        double shiftLightRPM = 0;
-        int lastShiftPoint = 0;
-        double revLim = 0;
-        int idleRPM = 0;
-        double clutchBitePoint = 0;
-        double clutchSpin = 0;
-        double clutchIdealRangeStart = 0;
-        double clutchIdealRangeStop = 0;
-        double clutchGearRelease = 0;
-        double clutchTimeRelease = 0;
-        double clutchGearReleased = 0;
-        double clutchTimeReleased = 0;
-        bool highPower = false;
-        double launchThrottle = 0;
+        double propShiftLightRPM = 0;
+        int propLastShiftPoint = 0;
+        double propRevLim = 0;
+        int propIdleRPM = 0;
+        double propClutchBitePoint = 0;
+        double propClutchSpin = 0;
+        double propClutchIdealRangeStart = 0;
+        double propClutchIdealRangeStop = 0;
+        double propClutchGearRelease = 0;
+        double propClutchTimeRelease = 0;
+        double propClutchGearReleased = 0;
+        double propClutchTimeReleased = 0;
+        bool propHighPower = false;
+        double propLaunchThrottle = 0;
         double pitMaxSpeed = 0;
         double pitCornerSpeed = 0;
         double pitBrakeDistance = 0;
@@ -301,7 +469,7 @@ namespace DahlDesign.Plugin.iRacing
         CrewType pitCrewType = CrewType.SingleTyre;
         bool pitMultitask = false;
         bool pitHasWindscreen = false;
-        AnimationType animaionType = AnimationType.Analog;
+        AnimationType propAnimationType = AnimationType.Analog;
         double revSpeed = 1;
 
         int ERSlapCounter = 0;
@@ -312,13 +480,13 @@ namespace DahlDesign.Plugin.iRacing
 
 
         double pitStopDuration = 0;
-        bool LFTog = false;
-        bool RFTog = false;
-        bool LRTog = false;
-        bool RRTog = false;
-        bool fuelTog = false;
-        bool WSTog = false;
-        bool repairTog = false;
+        bool propLFTog = false;
+        bool propRFTog = false;
+        bool propLRTog = false;
+        bool propRRTog = false;
+        bool propfuelTog = false;
+        bool propWSTog = false;
+        bool propRepairTog = false;
 
         bool sessionScreen = false;
         bool scenicActive = false;
@@ -335,7 +503,7 @@ namespace DahlDesign.Plugin.iRacing
         TimeSpan slowestLapTimeSpanCopy = new TimeSpan(0);
         double minFuelPush = 0;
         double maxFuelPush = 0;
-        double fuelPerLapOffset = 0;
+        double propFuelPerLapOffset = 0;
         bool onlyThrough = true;
 
         bool fuelTargetCheck = false;
@@ -348,7 +516,7 @@ namespace DahlDesign.Plugin.iRacing
         double highestThrottle = 0;
         bool throttleLift = false;
 
-        string smoothGear = "";
+        string propSmoothGear = "";
         int neutralCounter = 0;
 
         //Buttons
@@ -356,24 +524,28 @@ namespace DahlDesign.Plugin.iRacing
         int inCarRotary = 0;
 
         bool TCactive = false;
+        bool propTCactive = false;
+        bool propTCtoggle = false;
         double TCOffTimer = 0;
+        TimeSpan propTCOffTimer = new TimeSpan(0);
         bool TCLimiter = false;
         TimeSpan TCtimer = new TimeSpan(0);
 
-        bool p2pActive = false;
-        int p2pCounter = -1;
+
+        bool propP2pActive = false;
+        int propP2pCounter = -1;
         int myTireCompound = -1;
         int myDRSCount = -1;
 
-        bool radio = false;
-        string radioName = "";
-        int radioPosition;
-        bool radioIsSpectator;
+        bool propRadio = false;
+        string propRadioName = "";
+        int propRadioPosition;
+        bool propRadioIsSpectator;
 
         bool NBpressed = false;
         bool NBactive = false;
         bool NBspeedLim = false;
-        bool NBvalue = false;
+        bool propNBvalue = false;
 
         bool plusButtonCheck = false;
         bool minusButtonCheck = false;
@@ -382,18 +554,18 @@ namespace DahlDesign.Plugin.iRacing
         bool downshift = false;
         bool launchPressed = false;
         bool launchReleased = false;
-        bool launchActive = false;
-        bool paceCheck = false;
+        bool propLaunchActive = false;
+        bool propPaceCheck = false;
         bool pacePressed = false;
         bool paceReleased = false;
         bool pitPressed = false;
         bool pitReleased = false;
-        bool pitScreenEnable = false;
+        bool propPitScreenEnable = false;
         bool bitePointPressed = false;
         bool bitePointReleased = false;
-        bool bitePointAdjust = false;
-        bool LEDwarningActive = false;
-        bool spotMode = false;
+        bool propBitePointAdjust = false;
+        bool propLEDwarningActive = false;
+        bool propSpotMode = false;
 
         TimeSpan stopWatch = new TimeSpan(0);
         bool accelerationStart = false;
@@ -402,10 +574,10 @@ namespace DahlDesign.Plugin.iRacing
         bool twoHundered = false;
         TimeSpan reactionTime = new TimeSpan(0);
         string reactionGear = "";
-        double reactionPush = 0;
+        double propReactionPush = 0;
 
         TimeSpan offTrackTimer = new TimeSpan(0);
-        bool offTrack = false;
+        bool propOffTrack = false;
 
         double TCrpm = 0;
         double TCthrottle = 0;
@@ -413,7 +585,7 @@ namespace DahlDesign.Plugin.iRacing
         int TCduration = 0;
         string TCgear = "";
         int TCgearCD = 0;
-        int TCreleaseCD = 0;
+        int propTCreleaseCD = 0;
         int TCdropCD = 0;
         double TCPushTimer = 0;
         int tcBumpCounter = 0;
@@ -425,13 +597,24 @@ namespace DahlDesign.Plugin.iRacing
         List<double> brakeCurve = new List<double> { };
         bool brakeTrigger = false;
         bool brakeTriggerCheck = false;
-        double brakeMax = 0;
+        double propBrakeMax = 0;
+        double propBrakeCurveAUC = 0;
+        string propBrakeCurveValues = String.Empty;
+        double propThrottleAgro = 0;
+        string propThrottleCurveValues = String.Empty;
+
 
         int throttleClock = 0;
         int throttleClockBase = 0;
         List<double> throttleCurve = new List<double> { };
         bool throttleTrigger = false;
         bool throttleTriggerCheck = false;
+
+        double propSlipLF = 0;
+        double propSlipRF = 0;
+        double propSlipLR = 0;
+        double propSlipRR = 0;
+
 
         bool watchOn = false;
         bool watchReset = false;
@@ -444,8 +627,8 @@ namespace DahlDesign.Plugin.iRacing
 
         double RPMtracker = 0;
         bool RPMgearShift = false;
-        double RPMlastGear = 0;
-        string RPMgear = "";
+        double propRPMlastGear = 0;
+        string propRPMgear = "";
 
         List<string> classColors = new List<string> { "0xffda59", "0x33ceff", "0xff5888", "0xae6bff", "0x53ff77" };
         //1: light yellow
@@ -526,49 +709,43 @@ namespace DahlDesign.Plugin.iRacing
             #endregion
             #region SimHub Properties
 
-            Base.AttachDelegate("TestProperty", () => TCreleaseCD != 0);
-            Base.AttachDelegate("Position", () => realPosition);
-            Base.AttachDelegate("HotLapPosition", () => hotLapPosition);
-            Base.AttachDelegate("RaceFinished", () => raceFinished);
-            Base.AttachDelegate("SoF", () => SoF);
-            Base.AttachDelegate("IRchange", () => IRchange);
-            Base.AttachDelegate("MyClassColor", () => myClassColor);
+            Base.AttachDelegate("TestProperty", () => propTCreleaseCD != 0);
+            Base.AttachDelegate("Position", () => propRealPosition);
+            Base.AttachDelegate("HotLapPosition", () => propHotLapPosition);
+            Base.AttachDelegate("RaceFinished", () => propRaceFinished);
+            Base.AttachDelegate("SoF", () => propSoF);
+            Base.AttachDelegate("IRchange", () => propIRchange);
+            Base.AttachDelegate("MyClassColor", () => propMyClassColor);
+            Base.AttachDelegate("CenterDashType", () => propDashType);
+            Base.AttachDelegate("MenuType", () => propRotaryType);
+            Base.AttachDelegate("OptimalShiftGear1", () => propShiftPoint1);
+            Base.AttachDelegate("OptimalShiftGear2", () => propShiftPoint2);
+            Base.AttachDelegate("OptimalShiftGear3", () => propShiftPoint3);
+            Base.AttachDelegate("OptimalShiftGear4", () => propShiftPoint4);
+            Base.AttachDelegate("OptimalShiftGear5", () => propShiftPoint5);
+            Base.AttachDelegate("OptimalShiftGear6", () => propShiftPoint6);
+            Base.AttachDelegate("OptimalShiftGear7", () => propShiftPoint7);
+            Base.AttachDelegate("OptimalShiftCurrentGear", () => propCurrentShiftPoint);
+            Base.AttachDelegate("OptimalShiftLastGear", () => propLastShiftPoint);
+            Base.AttachDelegate("TrueRevLimiter", () => propRevLim);
+            Base.AttachDelegate("IdleRPM", () => propIdleRPM);
 
-            Base.AttachDelegate("CenterDashType", () => dashType);
-            Base.AttachDelegate("MenuType", () => rotaryType);
-
-
-            Base.AttachDelegate("OptimalShiftGear1", () => shiftPoint1);
-            Base.AttachDelegate("OptimalShiftGear2",  () => shiftPoint2);
-            Base.AttachDelegate("OptimalShiftGear3",  () => shiftPoint3);
-            Base.AttachDelegate("OptimalShiftGear4",  () => shiftPoint4);
-            Base.AttachDelegate("OptimalShiftGear5",  () => shiftPoint5);
-            Base.AttachDelegate("OptimalShiftGear6",  () => shiftPoint6);
-            Base.AttachDelegate("OptimalShiftGear7",  () => shiftPoint7);
-            Base.AttachDelegate("OptimalShiftCurrentGear", () => currentShiftPoint);
-            Base.AttachDelegate("OptimalShiftLastGear", () => lastShiftPoint);
-
-            Base.AttachDelegate("TrueRevLimiter", () => revLim);
-            Base.AttachDelegate("IdleRPM", () => idleRPM);
-
-            Base.AttachDelegate("Lap01Time", () => lapTimeList[0]);
-            Base.AttachDelegate("Lap02Time", () => lapTimeList[1]);
-            Base.AttachDelegate("Lap03Time", () => lapTimeList[2]);
-            Base.AttachDelegate("Lap04Time", () => lapTimeList[3]);
-            Base.AttachDelegate("Lap05Time", () => lapTimeList[4]);
-            Base.AttachDelegate("Lap06Time", () => lapTimeList[5]);
-            Base.AttachDelegate("Lap07Time", () => lapTimeList[6]);
-            Base.AttachDelegate("Lap08Time", () => lapTimeList[7]);
-
-            Base.AttachDelegate("Lap01Status", () => lapStatusList[0]);
-            Base.AttachDelegate("Lap02Status", () => lapStatusList[1]);
-            Base.AttachDelegate("Lap03Status", () => lapStatusList[2]);
-            Base.AttachDelegate("Lap04Status", () => lapStatusList[3]);
-            Base.AttachDelegate("Lap05Status", () => lapStatusList[4]);
-            Base.AttachDelegate("Lap06Status", () => lapStatusList[5]);
-            Base.AttachDelegate("Lap07Status", () => lapStatusList[6]);
-            Base.AttachDelegate("Lap08Status", () => lapStatusList[7]);
-
+            Base.AttachDelegate("Lap01Time", () => propLapTimeList[0]);
+            Base.AttachDelegate("Lap02Time", () => propLapTimeList[1]);
+            Base.AttachDelegate("Lap03Time", () => propLapTimeList[2]);
+            Base.AttachDelegate("Lap04Time", () => propLapTimeList[3]);
+            Base.AttachDelegate("Lap05Time", () => propLapTimeList[4]);
+            Base.AttachDelegate("Lap06Time", () => propLapTimeList[5]);
+            Base.AttachDelegate("Lap07Time", () => propLapTimeList[6]);
+            Base.AttachDelegate("Lap08Time", () => propLapTimeList[7]);
+            Base.AttachDelegate("Lap01Status", () => propLapStatusList[0]);
+            Base.AttachDelegate("Lap02Status", () => propLapStatusList[1]);
+            Base.AttachDelegate("Lap03Status", () => propLapStatusList[2]);
+            Base.AttachDelegate("Lap04Status", () => propLapStatusList[3]);
+            Base.AttachDelegate("Lap05Status", () => propLapStatusList[4]);
+            Base.AttachDelegate("Lap06Status", () => propLapStatusList[5]);
+            Base.AttachDelegate("Lap07Status", () => propLapStatusList[6]);
+            Base.AttachDelegate("Lap08Status", () => propLapStatusList[7]);
             Base.AddProp("Lap01Delta", 0);
             Base.AddProp("Lap02Delta", 0);
             Base.AddProp("Lap03Delta", 0);
@@ -579,98 +756,89 @@ namespace DahlDesign.Plugin.iRacing
             Base.AddProp("Lap08Delta", 0);
 
             Base.AttachDelegate("SmallFuelIncrement", () => Base.Settings.SmallFuelIncrement);
-            Base.AttachDelegate("LargeFuelIncrement", () =>Base.Settings.LargeFuelIncrement);
+            Base.AttachDelegate("LargeFuelIncrement", () => Base.Settings.LargeFuelIncrement);
             Base.AttachDelegate("CoupleInCarToPit", () => Base.Settings.CoupleInCarToPit);
-
-            Base.AttachDelegate("Idle", () => iRIdle);
-            Base.AttachDelegate("SmoothGear", () => smoothGear);
-            Base.AttachDelegate("TrackEntry", () => offTrack);
-            Base.AttachDelegate("LastGearMaxRPM", () => RPMlastGear);
-            Base.AttachDelegate("LastGear", () => RPMgear);
-            Base.AttachDelegate("OvertakeMode", () => overtakeMode);
-
-            Base.AddProp("StopWatch", TimeSpan.FromSeconds(0));
-            Base.AddProp("StopWatchSplit", TimeSpan.FromSeconds(0));
-
-            Base.AddProp("AccelerationTo100KPH", 0);
-            Base.AddProp("AccelerationTo200KPH", 0);
-            Base.AddProp("BrakeCurveValues", "");
-            Base.AddProp("BrakeCurvePeak", 0);
-            Base.AddProp("BrakeCurveAUC", 0);
-            Base.AddProp("ThrottleCurveValues", "");
-            Base.AddProp("ThrottleAgro", 0);
-
-            Base.AddProp("ERSTarget", 0);
-            Base.AddProp("ERSCharges", 0);
-            Base.AddProp("TCActive", false);
-            Base.AddProp("TCToggle", false);
-            Base.AddProp("ABSToggle", false);
+            Base.AttachDelegate("Idle", () => propIRIdle);
+            Base.AttachDelegate("SmoothGear", () => propSmoothGear);
+            Base.AttachDelegate("TrackEntry", () => propOffTrack);
+            Base.AttachDelegate("LastGearMaxRPM", () => propRPMlastGear);
+            Base.AttachDelegate("LastGear", () => propRPMgear);
+            Base.AttachDelegate("OvertakeMode", () => propOvertakeMode);
+            Base.AttachDelegate("StopWatch", () => watchReset);
+            Base.AttachDelegate("StopWatchSplit", () => watchSplitTime);
+            Base.AttachDelegate("AccelerationTo100KPH", () => propAccelerationTo100KPH);
+            Base.AttachDelegate("AccelerationTo200KPH", () => propAccelerationTo200KPH);
+            Base.AttachDelegate("ERSTarget", () => propERSTarget);
+            Base.AttachDelegate("ERSCharges", () => propERSCharges);
             Base.AttachDelegate("HasTC", () => hasTCtimer || hasTCtog || hasTC);
-            Base.AttachDelegate("HasABS", () => hasABS);
-            Base.AttachDelegate("HasDRS", () => hasDRS);
-            Base.AttachDelegate("DRSState", () => DRSpush);
-            Base.AttachDelegate("HasAntiStall", () => hasAntiStall);
-            Base.AttachDelegate("HasOvertake", () => hasOvertake);
-            Base.AttachDelegate("MapHigh", () => mapHigh);
-            Base.AttachDelegate("MapLow", () => mapLow);
-            Base.AttachDelegate("P2PCount", () => p2pCounter);
-            Base.AttachDelegate("P2PStatus", () => p2pActive);
+            Base.AttachDelegate("HasABS", () => propHasABS);
+            Base.AttachDelegate("HasDRS", () => propHasDRS);
+            Base.AttachDelegate("DRSState", () => propDRSpush);
+            Base.AttachDelegate("HasAntiStall", () => propHasAntiStall);
+            Base.AttachDelegate("HasOvertake", () => propHasOvertake);
+            Base.AttachDelegate("MapHigh", () => propMapHigh);
+            Base.AttachDelegate("MapLow", () => propMapLow);
+            Base.AttachDelegate("P2PCount", () => propP2pCounter);
+            Base.AttachDelegate("P2PStatus", () => propP2pActive);
+            Base.AttachDelegate("AnimationType", () => propAnimationType);
+            Base.AttachDelegate("ShiftLightRPM", () => propShiftLightRPM);
+            Base.AttachDelegate("ReactionTime", () => Math.Round(propReactionPush));
+            Base.AttachDelegate("LEDWarnings", () => propLEDwarningActive);
+            Base.AttachDelegate("LaunchBitePoint", () => propClutchBitePoint);
+            Base.AttachDelegate("LaunchSpin", () => propClutchSpin);
+            Base.AttachDelegate("LaunchIdealRangeStart", () => propClutchIdealRangeStart);
+            Base.AttachDelegate("LaunchIdealRangeStop", () => propClutchIdealRangeStop);
+            Base.AttachDelegate("LaunchGearRelease", () => propClutchGearRelease);
+            Base.AttachDelegate("LaunchGearReleased", () => propClutchGearReleased);
+            Base.AttachDelegate("LaunchTimeRelease", () => propClutchTimeRelease);
+            Base.AttachDelegate("LaunchTimeReleased", () => propClutchTimeReleased);
+            Base.AttachDelegate("HighPower", () => propHighPower);
+            Base.AttachDelegate("LaunchThrottle", () => propLaunchThrottle);
+
+            Base.AttachDelegate("TCActive", () => propTCactive);
+            Base.AttachDelegate("TCToggle", () => propTCtoggle);
+            Base.AttachDelegate("ABSToggle", () => propABStoggle);
             Base.AddProp("DRSCount", -1);
 
-            Base.AddProp("SlipLF", 0);
-            Base.AddProp("SlipRF", 0);
-            Base.AddProp("SlipLR", 0);
-            Base.AddProp("SlipRR", 0);
+            Base.AttachDelegate("BrakeCurveValues", () => propBrakeCurveValues);
+            Base.AttachDelegate("BrakeCurvePeak", () => propBrakeMax);
+            Base.AttachDelegate("BrakeCurveAUC", () => propBrakeCurveAUC);
+            Base.AttachDelegate("ThrottleCurveValues", () => propThrottleCurveValues);
+            Base.AttachDelegate("ThrottleAgro", () => propThrottleAgro);
 
-
-            Base.AttachDelegate("AnimationType", () => animaionType);
-            Base.AttachDelegate("ShiftLightRPM", () => shiftLightRPM);
-            Base.AttachDelegate("ReactionTime", () => Math.Round(reactionPush));
-            Base.AttachDelegate("LEDWarnings", () => LEDwarningActive);
-
-            Base.AttachDelegate("LaunchBitePoint", () => clutchBitePoint);
-            Base.AttachDelegate("LaunchSpin", () => clutchSpin);
-            Base.AttachDelegate("LaunchIdealRangeStart", () => clutchIdealRangeStart);
-            Base.AttachDelegate("LaunchIdealRangeStop", () => clutchIdealRangeStop);
-            Base.AttachDelegate("LaunchGearRelease", () => clutchGearRelease);
-            Base.AttachDelegate("LaunchGearReleased", () => clutchGearReleased);
-            Base.AttachDelegate("LaunchTimeRelease", () => clutchTimeRelease);
-            Base.AttachDelegate("LaunchTimeReleased", () => clutchTimeReleased);
-            Base.AttachDelegate("HighPower", () => highPower);
-            Base.AttachDelegate("LaunchThrottle", () =>  launchThrottle);
-
+            Base.AttachDelegate("SlipLF", () => propSlipLF);
+            Base.AttachDelegate("SlipRF", () => propSlipRF);
+            Base.AttachDelegate("SlipLR", () => propSlipLR);
+            Base.AttachDelegate("SlipRR", () => propSlipRR);
 
             Base.AddProp("ApproximateCalculations", false);
             Base.AddProp("LapsRemaining", 0);
             Base.AddProp("LapBalance", 0);
 
-            Base.AttachDelegate("LapStatus", () => lapStatus);
+            Base.AttachDelegate("LapStatus", () => propLapStatus);
 
             Base.AddProp("StintTimer", new TimeSpan(0));
             Base.AddProp("StintTotalTime", new TimeSpan(0));
             Base.AddProp("StintTotalHotlaps", 0);
             Base.AddProp("StintCurrentHotlap", 0);
-            Base.AttachDelegate("StintValidLaps", () => validStintLaps);
-            Base.AttachDelegate("StintInvalidLaps", () => invalidStintLaps);
+
+            Base.AttachDelegate("StintValidLaps", () => propValidStintLaps);
+            Base.AttachDelegate("StintInvalidLaps", () => propInvalidStintLaps);
 
             Base.AddProp("Pace", new TimeSpan(0));
 
-            Base.AttachDelegate("PitBoxPosition", () => pitBox);  //TODO: check, was 1 before
-            Base.AttachDelegate("PitBoxApproach", () => boxApproach);
-            Base.AddProp("PitEntry", false);
-            Base.AddProp("PitSpeeding", false);
+            Base.AttachDelegate("PitBoxPosition", () => propPitBox);
+            Base.AttachDelegate("PitBoxApproach", () => propBoxApproach);
+            Base.AttachDelegate("PitEntry", () => propPitEntry);
+            Base.AttachDelegate("PitSpeeding", () => propPitSpeeding);
 
-            Base.AttachDelegate("SessionBestLap", () => lapRecord);
-
-            Base.AddProp("HotlapLivePosition", 0);
-
-            Base.AttachDelegate("QualyWarmUpLap", () => warmup);
-            Base.AttachDelegate("QualyLap1Status", () => qLap1Status);
-            Base.AttachDelegate("QualyLap2Status", () => qLap2Status);
+            Base.AttachDelegate("SessionBestLap", () => propLapRecord);
+            Base.AttachDelegate("HotlapLivePosition", () => propHotLapLivePosition);
+            Base.AttachDelegate("QualyWarmUpLap", () => propWarmup);
+            Base.AttachDelegate("QualyLap1Status", () => propQLap1Status);
+            Base.AttachDelegate("QualyLap2Status", () => propQLap2Status);
             Base.AddProp("QualyLap1Time", new TimeSpan(0));
             Base.AddProp("QualyLap2Time", new TimeSpan(0));
-
-
 
             Base.AddProp("CurrentSector", 0);
             Base.AddProp("CurrentSector1Time", new TimeSpan(0));
@@ -681,10 +849,10 @@ namespace DahlDesign.Plugin.iRacing
             Base.AddProp("CurrentSector3Delta", 0);
             Base.AddProp("CurrentSector1Status", 0);
             Base.AddProp("CurrentSector2Status", 0);
-            Base.AttachDelegate("CurrentSector3Status", () => currentSector3Status);
-            Base.AttachDelegate("SessionBestSector1", () => TimeSpan.FromSeconds(sessionBestSector1));
-            Base.AttachDelegate("SessionBestSector2", () => TimeSpan.FromSeconds(sessionBestSector2));
-            Base.AttachDelegate("SessionBestSector3", () => TimeSpan.FromSeconds(sessionBestSector3));
+            Base.AttachDelegate("CurrentSector3Status", () => propCurrentSector3Status);
+            Base.AttachDelegate("SessionBestSector1", () => TimeSpan.FromSeconds(propSessionBestSector1));
+            Base.AttachDelegate("SessionBestSector2", () => TimeSpan.FromSeconds(propSessionBestSector2));
+            Base.AttachDelegate("SessionBestSector3", () => TimeSpan.FromSeconds(propSessionBestSector3));
             Base.AddProp("Sector1Pace", new TimeSpan(0));
             Base.AddProp("Sector2Pace", new TimeSpan(0));
             Base.AddProp("Sector3Pace", new TimeSpan(0));
@@ -698,19 +866,19 @@ namespace DahlDesign.Plugin.iRacing
             {
                 string propIndex = $"{i + 1:00}";
 
-                Base.AttachDelegate($"Lap{propIndex}Sector1Time", () => TimeSpan.FromSeconds(sector1TimeList[i]));
-                Base.AttachDelegate($"Lap{propIndex}Sector2Time", () => TimeSpan.FromSeconds(sector2TimeList[i]));
-                Base.AttachDelegate($"Lap{propIndex}Sector3Time", () => TimeSpan.FromSeconds(sector3TimeList[i]));
-                Base.AddProp($"Lap{propIndex}Sector1Delta", 0);
-                Base.AddProp($"Lap{propIndex}Sector2Delta", 0);
-                Base.AddProp($"Lap{propIndex}Sector3Delta", 0);
-                Base.AttachDelegate($"Lap{propIndex}Sector1Status", () => sector1StatusList[i]);
-                Base.AttachDelegate($"Lap{propIndex}Sector2Status", () => sector2StatusList[i]);
-                Base.AttachDelegate($"Lap{propIndex}Sector3Status", () => sector3StatusList[i]);
-                Base.AttachDelegate($"Lap{propIndex}FuelTargetDelta", () => fuelTargetDeltas[i]);
+                Base.AttachDelegate($"Lap{propIndex}Sector1Time", () => TimeSpan.FromSeconds(propSector1TimeList[i]));
+                Base.AttachDelegate($"Lap{propIndex}Sector2Time", () => TimeSpan.FromSeconds(propSector2TimeList[i]));
+                Base.AttachDelegate($"Lap{propIndex}Sector3Time", () => TimeSpan.FromSeconds(propSector3TimeList[i]));
+                Base.AttachDelegate($"Lap{propIndex}Sector1Delta", () => propLapSectorDelta[i, 1]);
+                Base.AttachDelegate($"Lap{propIndex}Sector2Delta", () => propLapSectorDelta[i, 2]);
+                Base.AttachDelegate($"Lap{propIndex}Sector3Delta", () => propLapSectorDelta[i, 3]);
+                Base.AttachDelegate($"Lap{propIndex}Sector1Status", () => propSector1StatusList[i]);
+                Base.AttachDelegate($"Lap{propIndex}Sector2Status", () => propSector2StatusList[i]);
+                Base.AttachDelegate($"Lap{propIndex}Sector3Status", () => propSector3StatusList[i]);
+                Base.AttachDelegate($"Lap{propIndex}FuelTargetDelta", () => propFuelTargetDeltas[i]);
             }
 
-            Base.AttachDelegate("LapRecord", () => lapRecord);
+            Base.AttachDelegate("LapRecord", () => propLapRecord);
             Base.AddProp("DeltaLastLap", 0);
             Base.AddProp("DeltaSessionBest", 0);
             Base.AddProp("DeltaLapRecord", 0);
@@ -767,195 +935,54 @@ namespace DahlDesign.Plugin.iRacing
             Base.AttachDelegate("RightCarGap", () => iRacingSpotter.carPositionRight);
             Base.AttachDelegate("RightCarName", () => iRacingSpotter.carNameRight);
 
-            Base.AddProp("CarAhead01Gap", 0);
-            Base.AddProp("CarAhead01RaceGap", 0);
-            Base.AddProp("CarAhead01BestLap", new TimeSpan(0));
-            Base.AddProp("CarAhead01Name", "");
-            Base.AddProp("CarAhead01Position", 0);
-            Base.AddProp("CarAhead01IRating", 0);
-            Base.AddProp("CarAhead01Licence", "");
-            Base.AddProp("CarAhead01IsAhead", false);
-            Base.AddProp("CarAhead01IsClassLeader", false);
-            Base.AddProp("CarAhead01IsInPit", false);
-            Base.AddProp("CarAhead01ClassColor", "");
-            Base.AddProp("CarAhead01ClassDifference", 0);
-            Base.AddProp("CarAhead01JokerLaps", 0);
-            Base.AddProp("CarAhead01LapsSincePit", -1);
-            Base.AddProp("CarAhead01P2PCount", -1);
-            Base.AddProp("CarAhead01P2PStatus", false);
-            Base.AddProp("CarAhead01RealGap", 0);
-            Base.AddProp("CarAhead01RealRelative", 0);
+            for (int i = 0; i < 6; i++)
+            {
+                string propIndex = $"{i + 1:00}";
 
-            Base.AddProp("CarAhead02Gap", 0);
-            Base.AddProp("CarAhead02RaceGap", 0);
-            Base.AddProp("CarAhead02BestLap", new TimeSpan(0));
-            Base.AddProp("CarAhead02Name", "");
-            Base.AddProp("CarAhead02Position", 0);
-            Base.AddProp("CarAhead02IRating", 0);
-            Base.AddProp("CarAhead02Licence", "");
-            Base.AddProp("CarAhead02IsAhead", false);
-            Base.AddProp("CarAhead02IsClassLeader", false);
-            Base.AddProp("CarAhead02IsInPit", false);
-            Base.AddProp("CarAhead02ClassColor", "");
-            Base.AddProp("CarAhead02ClassDifference", 0);
-            Base.AddProp("CarAhead02JokerLaps", 0);
-            Base.AddProp("CarAhead02LapsSincePit", -1);
-            Base.AddProp("CarAhead02P2PCount", -1);
-            Base.AddProp("CarAhead02P2PStatus", false);
-            Base.AddProp("CarAhead02RealGap", 0);
-            Base.AddProp("CarAhead02RealRelative", 0);
+                Base.AddProp($"CarAhead{propIndex}Gap", 0);
+                Base.AddProp($"CarAhead{propIndex}RaceGap", 0);
+                Base.AddProp($"CarAhead{propIndex}BestLap", new TimeSpan(0));
+                Base.AddProp($"CarAhead{propIndex}Name", "");
+                Base.AddProp($"CarAhead{propIndex}Position", 0);
+                Base.AddProp($"CarAhead{propIndex}IRating", 0);
+                Base.AddProp($"CarAhead{propIndex}Licence", "");
+                Base.AddProp($"CarAhead{propIndex}IsAhead", false);
+                Base.AddProp($"CarAhead{propIndex}IsClassLeader", false);
+                Base.AddProp($"CarAhead{propIndex}IsInPit", false);
+                Base.AddProp($"CarAhead{propIndex}ClassColor", "");
+                Base.AddProp($"CarAhead{propIndex}ClassDifference", 0);
+                Base.AddProp($"CarAhead{propIndex}JokerLaps", 0);
+                Base.AddProp($"CarAhead{propIndex}LapsSincePit", -1);
+                Base.AddProp($"CarAhead{propIndex}P2PCount", -1);
+                Base.AddProp($"CarAhead{propIndex}P2PStatus", false);
+                Base.AddProp($"CarAhead{propIndex}RealGap", 0);
+                Base.AddProp($"CarAhead{propIndex}RealRelative", 0);
+            }
 
-            Base.AddProp("CarAhead03Gap", 0);
-            Base.AddProp("CarAhead03RaceGap", 0);
-            Base.AddProp("CarAhead03BestLap", new TimeSpan(0));
-            Base.AddProp("CarAhead03Name", "");
-            Base.AddProp("CarAhead03Position", 0);
-            Base.AddProp("CarAhead03IRating", 0);
-            Base.AddProp("CarAhead03Licence", "");
-            Base.AddProp("CarAhead03IsAhead", false);
-            Base.AddProp("CarAhead03IsClassLeader", false);
-            Base.AddProp("CarAhead03IsInPit", false);
-            Base.AddProp("CarAhead03ClassColor", "");
-            Base.AddProp("CarAhead03ClassDifference", 0);
-            Base.AddProp("CarAhead03JokerLaps", 0);
-            Base.AddProp("CarAhead03LapsSincePit", -1);
-            Base.AddProp("CarAhead03P2PCount", -1);
-            Base.AddProp("CarAhead03P2PStatus", false);
-            Base.AddProp("CarAhead03RealGap", 0);
-            Base.AddProp("CarAhead03RealRelative", 0);
+            for (int i = 0; i < 6; i++)
+            {
+                string propIndex = $"{i + 1:00}";
 
-            Base.AddProp("CarAhead04Gap", 0);
-            Base.AddProp("CarAhead04RaceGap", 0);
-            Base.AddProp("CarAhead04BestLap", new TimeSpan(0));
-            Base.AddProp("CarAhead04Name", "");
-            Base.AddProp("CarAhead04Position", 0);
-            Base.AddProp("CarAhead04IRating", 0);
-            Base.AddProp("CarAhead04Licence", "");
-            Base.AddProp("CarAhead04IsAhead", false);
-            Base.AddProp("CarAhead04IsClassLeader", false);
-            Base.AddProp("CarAhead04IsInPit", false);
-            Base.AddProp("CarAhead04ClassColor", "");
-            Base.AddProp("CarAhead04ClassDifference", 0);
-            Base.AddProp("CarAhead04JokerLaps", 0);
-            Base.AddProp("CarAhead04LapsSincePit", -1);
-            Base.AddProp("CarAhead04P2PCount", -1);
-            Base.AddProp("CarAhead04P2PStatus", false);
-            Base.AddProp("CarAhead04RealGap", 0);
-            Base.AddProp("CarAhead04RealRelative", 0);
+                Base.AddProp($"CarBehind{propIndex}Gap", 0);
+                Base.AddProp($"CarBehind{propIndex}RaceGap", 0);
+                Base.AddProp($"CarBehind{propIndex}BestLap", new TimeSpan(0));
+                Base.AddProp($"CarBehind{propIndex}Name", "");
+                Base.AddProp($"CarBehind{propIndex}Position", 0);
+                Base.AddProp($"CarBehind{propIndex}IRating", 0);
+                Base.AddProp($"CarBehind{propIndex}Licence", "");
+                Base.AddProp($"CarBehind{propIndex}IsAhead", false);
+                Base.AddProp($"CarBehind{propIndex}IsClassLeader", false);
+                Base.AddProp($"CarBehind{propIndex}IsInPit", false);
+                Base.AddProp($"CarBehind{propIndex}ClassColor", "");
+                Base.AddProp($"CarBehind{propIndex}ClassDifference", 0);
+                Base.AddProp($"CarBehind{propIndex}JokerLaps", 0);
+                Base.AddProp($"CarBehind{propIndex}LapsSincePit", -1);
+                Base.AddProp($"CarBehind{propIndex}P2PCount", -1);
+                Base.AddProp($"CarBehind{propIndex}P2PStatus", false);
+                Base.AddProp($"CarBehind{propIndex}RealGap", 0);
+                Base.AddProp($"CarBehind{propIndex}RealRelative", 0);
+            }
 
-            Base.AddProp("CarAhead05Gap", 0);
-            Base.AddProp("CarAhead05RaceGap", 0);
-            Base.AddProp("CarAhead05BestLap", new TimeSpan(0));
-            Base.AddProp("CarAhead05Name", "");
-            Base.AddProp("CarAhead05Position", 0);
-            Base.AddProp("CarAhead05IRating", 0);
-            Base.AddProp("CarAhead05Licence", "");
-            Base.AddProp("CarAhead05IsAhead", false);
-            Base.AddProp("CarAhead05IsClassLeader", false);
-            Base.AddProp("CarAhead05IsInPit", false);
-            Base.AddProp("CarAhead05ClassColor", "");
-            Base.AddProp("CarAhead05ClassDifference", 0);
-            Base.AddProp("CarAhead05JokerLaps", 0);
-            Base.AddProp("CarAhead05LapsSincePit", -1);
-            Base.AddProp("CarAhead05P2PCount", -1);
-            Base.AddProp("CarAhead05P2PStatus", false);
-            Base.AddProp("CarAhead05RealGap", 0);
-            Base.AddProp("CarAhead05RealRelative", 0);
-
-            Base.AddProp("CarBehind01Gap", 0);
-            Base.AddProp("CarBehind01RaceGap", 0);
-            Base.AddProp("CarBehind01BestLap", new TimeSpan(0));
-            Base.AddProp("CarBehind01Name", "");
-            Base.AddProp("CarBehind01Position", 0);
-            Base.AddProp("CarBehind01IRating", 0);
-            Base.AddProp("CarBehind01Licence", "");
-            Base.AddProp("CarBehind01IsAhead", false);
-            Base.AddProp("CarBehind01IsClassLeader", false);
-            Base.AddProp("CarBehind01IsInPit", false);
-            Base.AddProp("CarBehind01ClassColor", "");
-            Base.AddProp("CarBehind01ClassDifference", 0);
-            Base.AddProp("CarBehind01JokerLaps", 0);
-            Base.AddProp("CarBehind01LapsSincePit", -1);
-            Base.AddProp("CarBehind01P2PCount", -1);
-            Base.AddProp("CarBehind01P2PStatus", false);
-            Base.AddProp("CarBehind01RealGap", 0);
-            Base.AddProp("CarBehind01RealRelative", 0);
-
-            Base.AddProp("CarBehind02Gap", 0);
-            Base.AddProp("CarBehind02RaceGap", 0);
-            Base.AddProp("CarBehind02BestLap", new TimeSpan(0));
-            Base.AddProp("CarBehind02Name", "");
-            Base.AddProp("CarBehind02Position", 0);
-            Base.AddProp("CarBehind02IRating", 0);
-            Base.AddProp("CarBehind02Licence", "");
-            Base.AddProp("CarBehind02IsAhead", false);
-            Base.AddProp("CarBehind02IsClassLeader", false);
-            Base.AddProp("CarBehind02IsInPit", false);
-            Base.AddProp("CarBehind02ClassColor", "");
-            Base.AddProp("CarBehind02ClassDifference", 0);
-            Base.AddProp("CarBehind02JokerLaps", 0);
-            Base.AddProp("CarBehind02LapsSincePit", -1);
-            Base.AddProp("CarBehind02P2PCount", -1);
-            Base.AddProp("CarBehind02P2PStatus", false);
-            Base.AddProp("CarBehind02RealGap", 0);
-            Base.AddProp("CarBehind02RealRelative", 0);
-
-            Base.AddProp("CarBehind03Gap", 0);
-            Base.AddProp("CarBehind03RaceGap", 0);
-            Base.AddProp("CarBehind03BestLap", new TimeSpan(0));
-            Base.AddProp("CarBehind03Name", "");
-            Base.AddProp("CarBehind03Position", 0);
-            Base.AddProp("CarBehind03IRating", 0);
-            Base.AddProp("CarBehind03Licence", "");
-            Base.AddProp("CarBehind03IsAhead", false);
-            Base.AddProp("CarBehind03IsClassLeader", false);
-            Base.AddProp("CarBehind03IsInPit", false);
-            Base.AddProp("CarBehind03ClassColor", "");
-            Base.AddProp("CarBehind03ClassDifference", 0);
-            Base.AddProp("CarBehind03JokerLaps", 0);
-            Base.AddProp("CarBehind03LapsSincePit", -1);
-            Base.AddProp("CarBehind03P2PCount", -1);
-            Base.AddProp("CarBehind03P2PStatus", false);
-            Base.AddProp("CarBehind03RealGap", 0);
-            Base.AddProp("CarBehind03RealRelative", 0);
-
-            Base.AddProp("CarBehind04Gap", 0);
-            Base.AddProp("CarBehind04RaceGap", 0);
-            Base.AddProp("CarBehind04BestLap", new TimeSpan(0));
-            Base.AddProp("CarBehind04Name", "");
-            Base.AddProp("CarBehind04Position", 0);
-            Base.AddProp("CarBehind04IRating", 0);
-            Base.AddProp("CarBehind04Licence", "");
-            Base.AddProp("CarBehind04IsAhead", false);
-            Base.AddProp("CarBehind04IsClassLeader", false);
-            Base.AddProp("CarBehind04IsInPit", false);
-            Base.AddProp("CarBehind04ClassColor", "");
-            Base.AddProp("CarBehind04ClassDifference", 0);
-            Base.AddProp("CarBehind04JokerLaps", 0);
-            Base.AddProp("CarBehind04LapsSincePit", -1);
-            Base.AddProp("CarBehind04P2PCount", -1);
-            Base.AddProp("CarBehind04P2PStatus", false);
-            Base.AddProp("CarBehind04RealGap", 0);
-            Base.AddProp("CarBehind04RealRelative", 0);
-
-            Base.AddProp("CarBehind05Gap", 0);
-            Base.AddProp("CarBehind05RaceGap", 0);
-            Base.AddProp("CarBehind05BestLap", new TimeSpan(0));
-            Base.AddProp("CarBehind05Name", "");
-            Base.AddProp("CarBehind05Position", 0);
-            Base.AddProp("CarBehind05IRating", 0);
-            Base.AddProp("CarBehind05Licence", "");
-            Base.AddProp("CarBehind05IsAhead", false);
-            Base.AddProp("CarBehind05IsClassLeader", false);
-            Base.AddProp("CarBehind05IsInPit", false);
-            Base.AddProp("CarBehind05ClassColor", "");
-            Base.AddProp("CarBehind05ClassDifference", 0);
-            Base.AddProp("CarBehind05JokerLaps", 0);
-            Base.AddProp("CarBehind05LapsSincePit", -1);
-            Base.AddProp("CarBehind05P2PCount", -1);
-            Base.AddProp("CarBehind05P2PStatus", false);
-            Base.AddProp("CarBehind05RealGap", 0);
-            Base.AddProp("CarBehind05RealRelative", 0);
 
             Base.AddProp("FuelDelta", 0);
             Base.AddProp("FuelPitWindowFirst", 0);
@@ -976,36 +1003,36 @@ namespace DahlDesign.Plugin.iRacing
 
             Base.AddProp("FuelSlowestFuelSavePace", new TimeSpan(0));
             Base.AddProp("FuelSaveDeltaValue", 0);
-            Base.AttachDelegate("FuelPerLapOffset", () => Math.Round(fuelPerLapOffset, 2));
+            Base.AttachDelegate("FuelPerLapOffset", () => Math.Round(propFuelPerLapOffset, 2));
             Base.AddProp("FuelPerLapTarget", 0);
             Base.AddProp("FuelPerLapTargetLastLapDelta", 0);
             Base.AddProp("FuelTargetDeltaCumulative", 0);
 
-            Base.AttachDelegate("TrackType", () => trackType);
-            Base.AttachDelegate("JokerThisLap", () => jokerThisLap);
-            Base.AttachDelegate("JokerCount", () => jokerLapCount);
+            Base.AttachDelegate("TrackType", () => propTrackType);
+            Base.AttachDelegate("JokerThisLap", () => propJokerThisLap);
+            Base.AttachDelegate("JokerCount", () => propJokerLapCount);
 
             Base.AddProp("MinimumCornerSpeed", 0);
             Base.AddProp("StraightLineSpeed", 0);
 
-            Base.AttachDelegate("PitToggleLF", () => LFTog);
-            Base.AttachDelegate("PitToggleRF", () => RFTog);
-            Base.AttachDelegate("PitToggleLR", () => LRTog);
-            Base.AttachDelegate("PitToggleRR", () => RRTog);
-            Base.AttachDelegate("PitToggleFuel", () => fuelTog);
-            Base.AttachDelegate("PitToggleWindscreen", () => WSTog);
-            Base.AttachDelegate("PitToggleRepair", () => repairTog);
+            Base.AttachDelegate("PitToggleLF", () => propLFTog);
+            Base.AttachDelegate("PitToggleRF", () => propRFTog);
+            Base.AttachDelegate("PitToggleLR", () => propLRTog);
+            Base.AttachDelegate("PitToggleRR", () => propRRTog);
+            Base.AttachDelegate("PitToggleFuel", () => propfuelTog);
+            Base.AttachDelegate("PitToggleWindscreen", () => propWSTog);
+            Base.AttachDelegate("PitToggleRepair", () => propRepairTog);
 
             Base.AddProp("PitServiceFuelTarget", 0);
             Base.AddProp("PitServiceLFPSet", 0);
             Base.AddProp("PitServiceRFPSet", 0);
             Base.AddProp("PitServiceLRPSet", 0);
             Base.AddProp("PitServiceRRPSet", 0);
-            
-            Base.AttachDelegate("CurrentFrontWing", () => currentFrontWing);
-            Base.AttachDelegate("CurrentRearWing", () => currentRearWing);
+
+            Base.AttachDelegate("CurrentFrontWing", () => propCurrentFrontWing);
+            Base.AttachDelegate("CurrentRearWing", () => propCurrentRearWing);
             Base.AttachDelegate("CurrentPowersteer", () => currentPWS);
-            Base.AttachDelegate("CurrentTape", () => currentTape);
+            Base.AttachDelegate("CurrentTape", () => propCurrentTape);
 
             Base.AddProp("PitCrewType", 0);
             Base.AddProp("PitTimeTires", 0);
@@ -1015,275 +1042,59 @@ namespace DahlDesign.Plugin.iRacing
             Base.AddProp("PitTimeDriveThrough", 0);
             Base.AddProp("PitTimeService", 0);
             Base.AddProp("PitTimeTotal", 0);
-
-
             Base.AddProp("PitExitPosition", 0);
 
-            Base.AddProp("PitExitCar1Name", "");
-            Base.AddProp("PitExitCar1Gap", 0);
-            Base.AddProp("PitExitCar1Position", 0);
-            Base.AddProp("PitExitCar1ClassDifference", 0);
-            Base.AddProp("PitExitCar1IsAhead", false);
-            Base.AddProp("PitExitCar1IsFaster", false);
+            for (int i = 0; i < 15; i++)
+            {
+                string propIndex = $"{i + 1:0}";
 
-            Base.AddProp("PitExitCar2Name", "");
-            Base.AddProp("PitExitCar2Gap", 0);
-            Base.AddProp("PitExitCar2Position", 0);
-            Base.AddProp("PitExitCar2ClassDifference", 0);
-            Base.AddProp("PitExitCar2IsAhead", false);
-            Base.AddProp("PitExitCar2IsFaster", false);
-
-            Base.AddProp("PitExitCar3Name", "");
-            Base.AddProp("PitExitCar3Gap", 0);
-            Base.AddProp("PitExitCar3Position", 0);
-            Base.AddProp("PitExitCar3ClassDifference", 0);
-            Base.AddProp("PitExitCar3IsAhead", false);
-            Base.AddProp("PitExitCar3IsFaster", false);
-
-            Base.AddProp("PitExitCar4Name", "");
-            Base.AddProp("PitExitCar4Gap", 0);
-            Base.AddProp("PitExitCar4Position", 0);
-            Base.AddProp("PitExitCar4ClassDifference", 0);
-            Base.AddProp("PitExitCar4IsAhead", false);
-            Base.AddProp("PitExitCar4IsFaster", false);
-
-            Base.AddProp("PitExitCar5Name", "");
-            Base.AddProp("PitExitCar5Gap", 0);
-            Base.AddProp("PitExitCar5Position", 0);
-            Base.AddProp("PitExitCar5ClassDifference", 0);
-            Base.AddProp("PitExitCar5IsAhead", false);
-            Base.AddProp("PitExitCar5IsFaster", false);
-
-            Base.AddProp("PitExitCar6Name", "");
-            Base.AddProp("PitExitCar6Gap", 0);
-            Base.AddProp("PitExitCar6Position", 0);
-            Base.AddProp("PitExitCar6ClassDifference", 0);
-            Base.AddProp("PitExitCar6IsAhead", false);
-            Base.AddProp("PitExitCar6IsFaster", false);
-
-            Base.AddProp("PitExitCar7Name", "");
-            Base.AddProp("PitExitCar7Gap", 0);
-            Base.AddProp("PitExitCar7Position", 0);
-            Base.AddProp("PitExitCar7ClassDifference", 0);
-            Base.AddProp("PitExitCar7IsAhead", false);
-            Base.AddProp("PitExitCar7IsFaster", false);
-
-            Base.AddProp("PitExitCar8Name", "");
-            Base.AddProp("PitExitCar8Gap", 0);
-            Base.AddProp("PitExitCar8Position", 0);
-            Base.AddProp("PitExitCar8ClassDifference", 0);
-            Base.AddProp("PitExitCar8IsAhead", false);
-            Base.AddProp("PitExitCar8IsFaster", false);
-
-            Base.AddProp("PitExitCar9Name", "");
-            Base.AddProp("PitExitCar9Gap", 0);
-            Base.AddProp("PitExitCar9Position", 0);
-            Base.AddProp("PitExitCar9ClassDifference", 0);
-            Base.AddProp("PitExitCar9IsAhead", false);
-            Base.AddProp("PitExitCar9IsFaster", false);
-
-            Base.AddProp("PitExitCar10Name", "");
-            Base.AddProp("PitExitCar10Gap", 0);
-            Base.AddProp("PitExitCar10Position", 0);
-            Base.AddProp("PitExitCar10ClassDifference", 0);
-            Base.AddProp("PitExitCar10IsAhead", false);
-            Base.AddProp("PitExitCar10IsFaster", false);
-
-            Base.AddProp("PitExitCar11Name", "");
-            Base.AddProp("PitExitCar11Gap", 0);
-            Base.AddProp("PitExitCar11Position", 0);
-            Base.AddProp("PitExitCar11ClassDifference", 0);
-            Base.AddProp("PitExitCar11IsAhead", false);
-            Base.AddProp("PitExitCar11IsFaster", false);
-
-            Base.AddProp("PitExitCar12Name", "");
-            Base.AddProp("PitExitCar12Gap", 0);
-            Base.AddProp("PitExitCar12Position", 0);
-            Base.AddProp("PitExitCar12ClassDifference", 0);
-            Base.AddProp("PitExitCar12IsAhead", false);
-            Base.AddProp("PitExitCar12IsFaster", false);
-
-            Base.AddProp("PitExitCar13Name", "");
-            Base.AddProp("PitExitCar13Gap", 0);
-            Base.AddProp("PitExitCar13Position", 0);
-            Base.AddProp("PitExitCar13ClassDifference", 0);
-            Base.AddProp("PitExitCar13IsAhead", false);
-            Base.AddProp("PitExitCar13IsFaster", false);
-
-            Base.AddProp("PitExitCar14Name", "");
-            Base.AddProp("PitExitCar14Gap", 0);
-            Base.AddProp("PitExitCar14Position", 0);
-            Base.AddProp("PitExitCar14ClassDifference", 0);
-            Base.AddProp("PitExitCar14IsAhead", false);
-            Base.AddProp("PitExitCar14IsFaster", false);
+                Base.AddProp($"PitExitCar{propIndex}Name", "");
+                Base.AddProp($"PitExitCar{propIndex}Gap", 0);
+                Base.AddProp($"PitExitCar{propIndex}Position", 0);
+                Base.AddProp($"PitExitCar{propIndex}ClassDifference", 0);
+                Base.AddProp($"PitExitCar{propIndex}IsAhead", false);
+                Base.AddProp($"PitExitCar{propIndex}IsFaster", false);
+            }
 
             /*
              * Hardware buttons
              */
-            Base.AttachDelegate("BitePointAdjust", () => bitePointAdjust);
+            Base.AttachDelegate("BitePointAdjust", () => propBitePointAdjust);
             Base.AddAction("BitePointPressed", (a, b) => bitePointPressed = true);
             Base.AddAction("BitePointReleased", (a, b) => bitePointReleased = true);
             Base.AddAction("PlusPressed", (a, b) => plusButtonCheck = true);
-
             Base.AddAction("MinusPressed", (a, b) => minusButtonCheck = true);
-
             Base.AddAction("OKPressed", (a, b) => OKButtonCheck = true);
-
             Base.AddAction("Upshift", (a, b) => upshift = true);
-
             Base.AddAction("Downshift", (a, b) => downshift = true);
-
-            Base.AttachDelegate("LaunchScreen", () => launchActive);
+            Base.AttachDelegate("LaunchScreen", () => propLaunchActive);
             Base.AddAction("LaunchPressed", (a, b) => launchPressed = true);
             Base.AddAction("LaunchReleased", (a, b) => launchReleased = true);
-
-            Base.AttachDelegate("NoBoost", () => NBvalue);
+            Base.AttachDelegate("NoBoost", () => propNBvalue);
             Base.AddAction("NBPressed", (a, b) => NBpressed = true);
-            Base.AttachDelegate("SpotterMode", () => spotMode);
-
-
-
-            Base.AttachDelegate("Radio", () => radio);
-            Base.AttachDelegate("RadioName", () => radioName);
-            Base.AttachDelegate("RadioPosition", () => radioPosition);
-            Base.AttachDelegate("RadioIsSpectator", () => radioIsSpectator);
-
-            Base.AddAction("RadioPressed", (a, b) => radio = true);
-            Base.AddAction("RadioReleased", (a, b) => radio = false);
-
-            Base.AttachDelegate("PaceCheck", () => paceCheck);
+            Base.AttachDelegate("SpotterMode", () => propSpotMode);
+            Base.AttachDelegate("Radio", () => propRadio);
+            Base.AttachDelegate("RadioName", () => propRadioName);
+            Base.AttachDelegate("RadioPosition", () => propRadioPosition);
+            Base.AttachDelegate("RadioIsSpectator", () => propRadioIsSpectator);
+            Base.AddAction("RadioPressed", (a, b) => propRadio = true);
+            Base.AddAction("RadioReleased", (a, b) => propRadio = false);
+            Base.AttachDelegate("PaceCheck", () => propPaceCheck);
             Base.AddAction("PacePressed", (a, b) => pacePressed = true);
             Base.AddAction("PaceReleased", (a, b) => paceReleased = true);
-
-            Base.AttachDelegate("PitScreen", () => pitScreenEnable);
+            Base.AttachDelegate("PitScreen", () => propPitScreenEnable);
             Base.AddAction("PitPressed", (a, b) => pitPressed = true);
             Base.AddAction("PitReleased", (a, b) => pitReleased = true);
-
-            Base.AddProp("TCOffTimer", new TimeSpan(0));
+            Base.AttachDelegate("TCOffTimer", () => propTCOffTimer);
             Base.AddAction("TCPressed", (a, b) => TCactive = true);
             Base.AddAction("TCReleased", (a, b) => TCactive = false);
 
             Base.AddProp("PitMenu", 1);
-            Base.AddAction("L1", (a, b) =>
+            for (int i = 1; i < 13; i++)
             {
-                pitMenuRotary = 1;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L2", (a, b) =>
-            {
-                pitMenuRotary = 2;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L3", (a, b) =>
-            {
-                pitMenuRotary = 3;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L4", (a, b) =>
-            {
-                pitMenuRotary = 4;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L5", (a, b) =>
-            {
-                pitMenuRotary = 5;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L6", (a, b) =>
-            {
-                pitMenuRotary = 6;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L7", (a, b) =>
-            {
-                pitMenuRotary = 7;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L8", (a, b) =>
-            {
-                pitMenuRotary = 8;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L9", (a, b) =>
-            {
-                pitMenuRotary = 9;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L10", (a, b) =>
-            {
-                pitMenuRotary = 10;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L11", (a, b) =>
-            {
-                pitMenuRotary = 11;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
-            Base.AddAction("L12", (a, b) =>
-            {
-                pitMenuRotary = 12;
-                Base.SetProp("PitMenu", pitMenuRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    inCarRotary = 0;
-                    Base.SetProp("InCarMenu", inCarRotary);
-                }
-            });
+                AddRotaryPitMenu(i);
+            }
+
             Base.AddAction("LInc", (a, b) =>
             {
                 pitMenuRotary++;
@@ -1306,210 +1117,13 @@ namespace DahlDesign.Plugin.iRacing
             Base.AttachDelegate("PitSavePaceLock", () => savePitTimerLock);
 
             Base.AddProp("InCarMenu", 0);
-            Base.AddAction("R1", (a, b) =>
+
+            for (int i = 1; i < 13; i++)
             {
-                inCarRotary = 1;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R2", (a, b) =>
-            {
-                inCarRotary = 2;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R3", (a, b) =>
-            {
-                inCarRotary = 3;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R4", (a, b) =>
-            {
-                inCarRotary = 4;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R5", (a, b) =>
-            {
-                inCarRotary = 5;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R6", (a, b) =>
-            {
-                inCarRotary = 6;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R7", (a, b) =>
-            {
-                inCarRotary = 7;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R8", (a, b) =>
-            {
-                inCarRotary = 8;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R9", (a, b) =>
-            {
-                inCarRotary = 9;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R10", (a, b) =>
-            {
-                inCarRotary = 10;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R11", (a, b) =>
-            {
-                inCarRotary = 11;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
-            Base.AddAction("R12", (a, b) =>
-            {
-                inCarRotary = 12;
-                Base.SetProp("InCarMenu", inCarRotary);
-                if (Base.Settings.DDSEnabled)
-                {
-                    if (rotaryType == "Single")
-                    {
-                        pitMenuRotary = inCarRotary;
-                        Base.SetProp("PitMenu", inCarRotary);
-                    }
-                    else
-                    {
-                        Base.SetProp("PitMenu", 0);
-                    }
-                }
-            });
+                AddRotaryInCar(i);
+            }
+
+
             Base.AddAction("RInc", (a, b) =>
             {
                 inCarRotary++;
@@ -1529,8 +1143,9 @@ namespace DahlDesign.Plugin.iRacing
                 Base.SetProp("InCarMenu", inCarRotary);
             });
             #endregion
-
         }
+
+
 
         public void DataUpdateIdle()
         {
@@ -1538,34 +1153,34 @@ namespace DahlDesign.Plugin.iRacing
                 return;
 
 
-            fuelPerLapOffset = 0;
+            propFuelPerLapOffset = 0;
             savePitTimerLock = false;
             savePitTimerSnap = new TimeSpan(0);
             slowestLapTimeSpanCopy = new TimeSpan(0);
 
-            pitBox = 0.5;
+            propPitBox = 0.5;
             hasPitted = false;
-            validStintLaps = 0;
-            invalidStintLaps = 0;
+            propValidStintLaps = 0;
+            propInvalidStintLaps = 0;
             fuelTargetDeltaCumulative = 0;
-            raceFinished = false;
-            jokerThisLap = false;
+            propRaceFinished = false;
+            propJokerThisLap = false;
             jokerLapChecker = false;
             finishedCars = new List<string> { };
             fuelTargetCheck = false;
             oldFuelValue = 0;
             NBactive = false;
-            NBvalue = false;
+            propNBvalue = false;
             NBspeedLim = false;
             ERSlapCounter = 0;
             ERSstartingLap = true;
             TCon = false;
             TCduration = 0;
-            offTrack = false;
-            IRchange = 0;
+            propOffTrack = false;
+            propIRchange = 0;
 
             //Props that need refresh
-            Base.SetProp("TCActive", false);
+            propTCactive = false;
 
             //Refreshing some lists
             if (Base.counter == 59)
@@ -1639,56 +1254,57 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.gameName != "IRacing" || !Base.gameRunning)
                 return;
 
+            #region GameData
             //Gaining access to raw data
             if (Base.gameData?.NewData?.GetRawDataObject() is DataSampleEx) { irData = Base.gameData.NewData.GetRawDataObject() as DataSampleEx; }
 
             //Updating relevant data
-            TimeSpan globalClock = TimeSpan.FromTicks(DateTime.Now.Ticks);
+            globalClock = TimeSpan.FromTicks(DateTime.Now.Ticks);
 
             irData.Telemetry.TryGetValue("PlayerCarTeamIncidentCount", out object rawIncidents);
-            int incidents = Convert.ToInt32(rawIncidents);                                          //Incidents
+            incidents = Convert.ToInt32(rawIncidents);                                          //Incidents
 
             irData.Telemetry.TryGetValue("PlayerCarInPitStall", out object rawStall);
-            int pitStall = Convert.ToInt32(rawStall);                                               //Pit Stall
+            pitStall = Convert.ToInt32(rawStall);                                               //Pit Stall
 
             irData.Telemetry.TryGetValue("ManualBoost", out object rawBoost);
-            bool boost = Convert.ToBoolean(rawBoost);                                               //Boost
+            boost = Convert.ToBoolean(rawBoost);                                               //Boost
 
             irData.Telemetry.TryGetValue("PowerMGU_K", out object rawMGU);
-            int MGU = Convert.ToInt32(rawMGU);                                                      //MGU-K current
+            MGU = Convert.ToInt32(rawMGU);                                                      //MGU-K current
 
             irData.Telemetry.TryGetValue("EnergyERSBatteryPct", out object rawBattery);
-            double battery = Convert.ToDouble(rawBattery);                                          //Battery
+            battery = Convert.ToDouble(rawBattery);                                          //Battery
 
             irData.Telemetry.TryGetValue("DRS_Status", out object rawDRS);
-            int DRSState = Convert.ToInt32(rawDRS);                                                 //DRS state
+            DRSState = Convert.ToInt32(rawDRS);                                                 //DRS state
 
-            double slipLF = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.FrontLeft"));  //Wheel slip
-            double slipRF = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.FrontRight"));  //Wheel slip
-            double slipLR = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.RearLeft"));  //Wheel slip
-            double slipRR = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.RearRight"));  //Wheel slip
+            slipLF = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.FrontLeft"));  //Wheel slip
+            slipRF = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.FrontRight"));  //Wheel slip
+            slipLR = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.RearLeft"));  //Wheel slip
+            slipRR = Convert.ToDouble(Base.GetProp("ShakeITMotorsV3Plugin.Export.WheelSlip.RearRight"));  //Wheel slip
 
-            double trackPosition = irData.Telemetry.LapDistPct;                                     //Lap distance
-            int completedLaps = Base.gameData.NewData.CompletedLaps;                                         //Completed laps
-            int currentLap = Base.gameData.NewData.CurrentLap;                                               //Current lap
-            int totalLaps = Base.gameData.NewData.TotalLaps;                                                 //Total laps
-            TimeSpan currentLapTime = Base.gameData.NewData.CurrentLapTime;                                  //Current lap time
-            int pit = Base.gameData.NewData.IsInPit;                                                         //Pit
-            int pitLimiter = Base.gameData.NewData.PitLimiterOn;                                             //Pit limiter on/off
-            string gear = Base.gameData.NewData.Gear;                                                        //Gear
-            double fuelAvgLap = Convert.ToDouble(Base.GetProp("DataCorePlugin.Computed.Fuel_LitersPerLap")); //Fuel avg lap
-            int black = Base.gameData.NewData.Flag_Black;                                                    //Black flag
-            int white = Base.gameData.NewData.Flag_White;                                                    //White flag
-            int checkered = Base.gameData.NewData.Flag_Checkered;                                            //Checkered flag
-            TimeSpan lastLapTime = Base.gameData.NewData.LastLapTime;                                        //Last Lap Time 
-            string carModel = Base.gameData.NewData.CarModel;                                                //Car model
-            string track = Base.gameData.NewData.TrackName;                                                  //Track name
-            string session = Base.gameData.NewData.SessionTypeName;                                          //Session type
-            TimeSpan timeLeft = Base.gameData.NewData.SessionTimeLeft;                                       //Session time left
-            double pitLocation = irData.SessionData.DriverInfo.DriverPitTrkPct;                     //Pit location
-            double trackLength = Base.gameData.NewData.TrackLength;                                          //Track length
-            double defaultRevLim = Base.gameData.NewData.CarSettings_MaxRPM;                                 //Default rev limiter
-            int pitSpeedLimit = 0;                                                                  //Pit speed limit
+            trackPosition = irData.Telemetry.LapDistPct;                                     //Lap distance
+            completedLaps = Base.gameData.NewData.CompletedLaps;                                         //Completed laps
+            currentLap = Base.gameData.NewData.CurrentLap;                                               //Current lap
+            totalLaps = Base.gameData.NewData.TotalLaps;                                                 //Total laps
+            currentLapTime = Base.gameData.NewData.CurrentLapTime;                                  //Current lap time
+            pit = Base.gameData.NewData.IsInPit;                                                         //Pit
+            pitLimiter = Base.gameData.NewData.PitLimiterOn;                                             //Pit limiter on/off
+            gear = Base.gameData.NewData.Gear;                                                        //Gear
+            fuelAvgLap = Convert.ToDouble(Base.GetProp("DataCorePlugin.Computed.Fuel_LitersPerLap")); //Fuel avg lap
+            black = Base.gameData.NewData.Flag_Black;                                                    //Black flag
+            white = Base.gameData.NewData.Flag_White;                                                    //White flag
+            checkered = Base.gameData.NewData.Flag_Checkered;                                            //Checkered flag
+            lastLapTime = Base.gameData.NewData.LastLapTime;                                        //Last Lap Time 
+            carModel = Base.gameData.NewData.CarModel;                                                //Car model
+            track = Base.gameData.NewData.TrackName;                                                  //Track name
+            session = Base.gameData.NewData.SessionTypeName;                                          //Session type
+            timeLeft = Base.gameData.NewData.SessionTimeLeft;                                       //Session time left
+            pitLocation = irData.SessionData.DriverInfo.DriverPitTrkPct;                     //Pit location
+            trackLength = Base.gameData.NewData.TrackLength;                                          //Track length
+            defaultRevLim = Base.gameData.NewData.CarSettings_MaxRPM;                                 //Default rev limiter
+            pitSpeedLimit = 0;                                                                  //Pit speed limit
             if (irData.SessionData.WeekendInfo.TrackPitSpeedLimit != null)
             {
                 if (Convert.ToInt32(irData.SessionData.WeekendInfo.TrackPitSpeedLimit.Substring(0, 1)) != 0)
@@ -1697,7 +1313,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
             }
 
-            int ERSlimit = 0;
+            ERSlimit = 0;
             if (pitSpeedLimit > 70)
             {
                 ERSlimit = 76;
@@ -1706,68 +1322,70 @@ namespace DahlDesign.Plugin.iRacing
             {
                 ERSlimit = 52;
             }
-            int sessionNumber = irData.Telemetry.SessionNum;                                        //Session number, to find correct session
-            string trackConfig = irData.SessionData.WeekendInfo.TrackType;                          //Track type name
-            int greenFlag = Base.gameData.NewData.Flag_Green;                                                //Green flag
+
+            sessionNumber = irData.Telemetry.SessionNum;                                        //Session number, to find correct session
+            trackConfig = irData.SessionData.WeekendInfo.TrackType;                          //Track type name
+            greenFlag = Base.gameData.NewData.Flag_Green;                                                //Green flag
 
             irData.Telemetry.TryGetValue("dcTractionControlToggle", out object rawTCswitch);        //In-game TC toggle
-            bool TCswitch = Convert.ToBoolean(rawTCswitch);
+            TCswitch = Convert.ToBoolean(rawTCswitch);
 
             irData.Telemetry.TryGetValue("dcABSToggle", out object rawABSswitch);                   //In-game ABS toggle
-            bool ABSswitch = Convert.ToBoolean(rawABSswitch);
+            ABSswitch = Convert.ToBoolean(rawABSswitch);
 
             irData.Telemetry.TryGetValue("dcABS", out object rawABS);                               //In-game ABS switch position
-            int ABS = Convert.ToInt32(rawABS);
+            ABS = Convert.ToInt32(rawABS);
 
             irData.Telemetry.TryGetValue("dcTractionControl", out object rawTC);                    //In-game TC switch position
-            int TC = Convert.ToInt32(rawTC);
+            TC = Convert.ToInt32(rawTC);
 
             irData.Telemetry.TryGetValue("PlayerTrackSurfaceMaterial", out object rawSurface);      //Track surface type
-            int surface = Convert.ToInt32(rawSurface);
+            surface = Convert.ToInt32(rawSurface);
 
-            double stintLength = Base.gameData.NewData.StintOdo;                                             //Stint length
-            int opponents = Base.gameData.NewData.Opponents.Count;                                           //All opponents
-            int classOpponents = Base.gameData.NewData.PlayerClassOpponentsCount;                            //Class opponents
-            double fuel = Base.gameData.NewData.Fuel;                                                        //Fuel on tank
+            stintLength = Base.gameData.NewData.StintOdo;                                             //Stint length
+            opponents = Base.gameData.NewData.Opponents.Count;                                           //All opponents
+            classOpponents = Base.gameData.NewData.PlayerClassOpponentsCount;                            //Class opponents
+            fuel = Base.gameData.NewData.Fuel;                                                        //Fuel on tank
 
             irData.Telemetry.TryGetValue("SessionState", out object rawSessionState);
-            int sessionState = Convert.ToInt32(rawSessionState);                                    //Session State
+            sessionState = Convert.ToInt32(rawSessionState);                                    //Session State
 
             irData.Telemetry.TryGetValue("PlayerTrackSurface", out object rawtrackLocation);
-            int trackLocation = Convert.ToInt32(rawtrackLocation);                                  //TrkLoc
+            trackLocation = Convert.ToInt32(rawtrackLocation);                                  //TrkLoc
 
             irData.Telemetry.TryGetValue("dpWingFront", out object rawWingFront);                   //Front wing setting
-            double wingFront = Math.Round(Convert.ToDouble(rawWingFront), 2);
+            wingFront = Math.Round(Convert.ToDouble(rawWingFront), 2);
 
             irData.Telemetry.TryGetValue("dpWingRear", out object rawWingRear);                     //Rear wing setting
-            double wingRear = Math.Round(Convert.ToDouble(rawWingRear), 1);
+            wingRear = Math.Round(Convert.ToDouble(rawWingRear), 1);
 
             irData.Telemetry.TryGetValue("dpQTape", out object rawtape);                            //Tape
-            int tape = Convert.ToInt16(rawtape);
+            tape = Convert.ToInt16(rawtape);
 
             irData.Telemetry.TryGetValue("dpPowerSteering", out object rawPWS);                     //Powersteering
-            int PWS = Convert.ToInt16(rawPWS);
+            PWS = Convert.ToInt16(rawPWS);
 
-            double gearRatio = Convert.ToDouble(Base.GetProp("GameRawData.SessionData.CarSetup.Chassis.Rear.DropGearARatio")); //Gear ratio
+            gearRatio = Convert.ToDouble(Base.GetProp("GameRawData.SessionData.CarSetup.Chassis.Rear.DropGearARatio")); //Gear ratio
 
             irData.Telemetry.TryGetValue("SessionOnJokerLap", out object rawisOnJoker);             //Joker lap
-            bool onJokerLap = Convert.ToBoolean(rawisOnJoker);
+            onJokerLap = Convert.ToBoolean(rawisOnJoker);
 
             irData.Telemetry.TryGetValue("PlayerCarIdx", out object rawPlayerIdx);                  //My CarIdx
-            int myCarIdx = Convert.ToInt32(rawPlayerIdx);
+            myCarIdx = Convert.ToInt32(rawPlayerIdx);
 
             irData.Telemetry.TryGetValue("CarIdxP2P_Count", out object p2pCount);                   //P2P Counts
             irData.Telemetry.TryGetValue("CarIdxP2P_Status", out object p2pStatus);                 //P2P Statuses
             irData.Telemetry.TryGetValue("CarIdxBestLapTime", out object BestLapTimes);             //BestLapTimes
+            //BestLapTimes = (float[])_BestLapTimes;
             irData.Telemetry.TryGetValue("CarIdxTireCompound", out object tireCompounds);           //Tire compounds
 
-            bool furled = Convert.ToBoolean(Base.GetProp("GameRawData.Telemetry.SessionFlagsDetails.IsFurled"));  //Furled flag
+            furled = Convert.ToBoolean(Base.GetProp("GameRawData.Telemetry.SessionFlagsDetails.IsFurled"));  //Furled flag
 
             irData.Telemetry.TryGetValue("LRshockVel", out object rawLRShockVel);                   //Left rear shock
-            double LRShockVel = Convert.ToDouble(rawLRShockVel);
+            LRShockVel = Convert.ToDouble(rawLRShockVel);
 
             irData.Telemetry.TryGetValue("LRshockVel", out object rawRRShockVel);                   //Right rear shock
-            double RRShockVel = Convert.ToDouble(rawRRShockVel);
+            RRShockVel = Convert.ToDouble(rawRRShockVel);
 
             irData.Telemetry.TryGetValue("DRS_Count", out object rawDRSCount);                      //DRS Count
             if (rawDRSCount != null)
@@ -1779,7 +1397,7 @@ namespace DahlDesign.Plugin.iRacing
                 myDRSCount = 0;
             }
 
-            var estimatedLapTime = (TimeSpan)(Base.GetProp("PersistantTrackerPlugin.EstimatedLapTime")); //EstimatedLapTime
+            estimatedLapTime = (TimeSpan)(Base.GetProp("PersistantTrackerPlugin.EstimatedLapTime")); //EstimatedLapTime
 
             if (Base.gameData.NewData.OpponentsAheadOnTrack.Count > 0)
             {
@@ -1787,22 +1405,22 @@ namespace DahlDesign.Plugin.iRacing
                 aheadClass = Base.gameData.NewData.OpponentsAheadOnTrack[0].CarClass;                        //Ahead Class
                 aheadClassPosition = Base.gameData.NewData.OpponentsAheadOnTrack[0].PositionInClass;         //Ahead Position (class)
             }
-            string myClass = Base.gameData.NewData.CarClass;                                                 //My Class
-            int myPosition = irData.Telemetry.PlayerCarClassPosition;                               //My Position (class)
-            double throttle = Base.gameData.NewData.Throttle;                                                //Throttle application
-            double brake = Base.gameData.NewData.Brake;                                                      //Brake application
-            double clutch = Base.gameData.NewData.Clutch;                                                    //Clutch application
-            double speed = Base.gameData.NewData.SpeedLocal;                                                 //Speed
-            double rpm = Base.gameData.NewData.Rpms;                                                         //RPM value
+            myClass = Base.gameData.NewData.CarClass;                                                 //My Class
+            myPosition = irData.Telemetry.PlayerCarClassPosition;                               //My Position (class)
+            throttle = Base.gameData.NewData.Throttle;                                                //Throttle application
+            brake = Base.gameData.NewData.Brake;                                                      //Brake application
+            clutch = Base.gameData.NewData.Clutch;                                                    //Clutch application
+            speed = Base.gameData.NewData.SpeedLocal;                                                 //Speed
+            rpm = Base.gameData.NewData.Rpms;                                                         //RPM value
 
-            double plannedFuel = Convert.ToDouble(irData.Telemetry.PitSvFuel);                      //Planned fuel
-            double maxFuel = Base.gameData.NewData.MaxFuel;
+            plannedFuel = Convert.ToDouble(irData.Telemetry.PitSvFuel);                      //Planned fuel
+            maxFuel = Base.gameData.NewData.MaxFuel;
             plannedLFPressure = irData.Telemetry.PitSvLFP;                                    //Planned LF pressure
             plannedRFPressure = irData.Telemetry.PitSvRFP;                                    //Planned RF pressure
             plannedLRPressure = irData.Telemetry.PitSvLRP;                                    //Planned LR pressure
             plannedRRPressure = irData.Telemetry.PitSvRRP;                                    //Planned RR pressure
 
-            int cam = irData.Telemetry.CamCameraState;                                              //Cam state
+            cam = irData.Telemetry.CamCameraState;                                              //Cam state
             sessionScreen = Convert.ToBoolean(cam & 1);
             scenicActive = Convert.ToBoolean(cam & 2);
             camToolActive = Convert.ToBoolean(cam & 4);
@@ -1813,251 +1431,76 @@ namespace DahlDesign.Plugin.iRacing
             useKey10xAcceleration = Convert.ToBoolean(cam & 128);
             useMouseAimMode = Convert.ToBoolean(cam & 256);
 
-            int pitInfo = irData.Telemetry.PitSvFlags;                                              //Pit stop toggles
-            LFTog = Convert.ToBoolean(pitInfo & 1);
-            RFTog = Convert.ToBoolean(pitInfo & 2);
-            LRTog = Convert.ToBoolean(pitInfo & 4);
-            RRTog = Convert.ToBoolean(pitInfo & 8);
-            fuelTog = Convert.ToBoolean(pitInfo & 16);
-            WSTog = Convert.ToBoolean(pitInfo & 32);
-            repairTog = Convert.ToBoolean(pitInfo & 64);
+            pitInfo = irData.Telemetry.PitSvFlags;                                              //Pit stop toggles
+            propLFTog = Convert.ToBoolean(pitInfo & 1);
+            propRFTog = Convert.ToBoolean(pitInfo & 2);
+            propLRTog = Convert.ToBoolean(pitInfo & 4);
+            propRRTog = Convert.ToBoolean(pitInfo & 8);
+            propfuelTog = Convert.ToBoolean(pitInfo & 16);
+            propWSTog = Convert.ToBoolean(pitInfo & 32);
+            propRepairTog = Convert.ToBoolean(pitInfo & 64);
+            #endregion
 
 
-            //----------------------------------------------
-            //--------SMOOTH GEAR---------------------------
-            //----------------------------------------------
-
-            if (gear != "N")
-            {
-                smoothGear = gear;
-                neutralCounter = 0;
-            }
-
-            if (gear == "N")
-            {
-                neutralCounter++;
-            }
-
-            if (neutralCounter > 6)
-            {
-                smoothGear = "N";
-                neutralCounter = 0;
-            }
-            if (Base.DDC.button8Mode == 1)
-            {
-                smoothGear = "N";
-            }
-
-            //----------------------------------------------
-            //--------SoF AND IR LOSS/GAIN------------------
-            //----------------------------------------------
+            SmoothGear();
 
             if (Base.counter == 8)
             {
-                List<double?> iratings = new List<double?> { };
-                double weight = 1600 / Math.Log(2);
-                double posCorr = (classOpponents / 2 - realPosition) / 100;
-
-                for (int i = 0; i < opponents; i++)
-                {
-                    if (Base.gameData.NewData.Opponents[i].CarClass == myClass)
-                    {
-                        iratings.Add(Base.gameData.NewData.Opponents[i].IRacing_IRating);
-                    }
-                    else
-                    {
-                        iratings.Add(0);
-                    }
-                }
-
-                List<double> filtered = new List<double> { };
-                double valueHolder = 0;
-
-                for (int a = 0; a < iratings.Count; a++)
-                {
-                    valueHolder = Convert.ToDouble(iratings[a]);
-                    if (valueHolder != 0)
-                    {
-                        filtered.Add(valueHolder);
-                    }
-                }
-
-                double sum = 0;
-                double IRscore = 0;
-
-                if (filtered.Count >= classOpponents)
-                {
-                    for (int e = 0; e < classOpponents; e++)
-                    {
-                        sum += Math.Pow(2, -filtered[e] / 1600);
-                        IRscore += (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight) / ((1 - Math.Exp(-filtered[e] / weight)) * Math.Exp(-myIR / weight) + (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight));
-                    }
-                }
-
-                if (IRscore != 0)
-                {
-                    IRscore = IRscore - 0.5;
-                }
-
-                SoF = 0;
-
-                if (sum != 0)
-                {
-                    SoF = Math.Round(weight * Math.Log(classOpponents / sum));
-                    if (session == "Race" && !raceFinished && sessionState > 3)
-                    {
-                        IRchange = Math.Round((classOpponents - realPosition - IRscore - posCorr) * 200 / classOpponents);
-                    }
-
-                }
+                SofAndIrating();
             }
 
-            //----------------------------------------------
-            //--------OFF TRACK REGISTRATION----------------
-            //----------------------------------------------
-            if ((session == "Race" || session == "Practice" || session == "Open Qualify") && sessionState > 3)
-            {
-                if ((trackLocation != 0 && !(pit != 1 && speed < 10) && !(awayFromPits > 2 && stintLength < 400 && stintLength > 20)) || ((currentLap == 1 || currentLap == 0) && stintLength < 400 && session == "Race"))
-                {
-                    offTrackTimer = globalClock;
-                }
-                if (globalClock.TotalSeconds - offTrackTimer.TotalSeconds > 1 && speed < 150)
-                {
-                    offTrack = true;
-                }
-                if (offTrack && globalClock.TotalSeconds - offTrackTimer.TotalSeconds < 1 && speed > 50)
-                {
-                    offTrack = false;
-                }
-            }
-
-
-            //-----------------------------------------------
-            //--------TRACK ATTRIBUTES UPDATE----------------
-            //-----------------------------------------------
+            OffTrack();
 
             if (Base.counter == 1)
             {
-                //Resetting values to default
-
-                trackType = 0;
-                hasExempt = false;
-                exemptOne = 0;
-                exemptOneMargin = 0;
-                exemptTwo = 0;
-                exemptTwoMargin = 0;
-                hasCutOff = false;
-                cutoffValue = 0;
-                pitStopBase = 25;
-                pitStopMaxSpeed = 0;
-                pitStopCornerSpeed = 0;
-                pitStopBrakeDistance = 0;
-                pitStopAcceleration = 0;
-                trackHasAnimatedCrew = false;
-                pitFastSide = "Right";
-
-                //Extracting info from track list
-
-                Tracks _trackInfo = trackInfo.FirstOrDefault(x => x.Id == track);
-                if (_trackInfo != null)
-                {
-                    trackType = _trackInfo.TrackType;
-                    hasExempt = _trackInfo.HasExempt;
-                    exemptOne = _trackInfo.ExemptOne;
-                    exemptOneMargin = _trackInfo.ExemptOneMargin;
-                    exemptTwo = _trackInfo.ExemptTwo;
-                    exemptTwoMargin = _trackInfo.ExemptTwoMargin;
-                    hasCutOff = _trackInfo.HasCutOff;
-                    cutoffValue = _trackInfo.CutOff;
-                    pitStopBase = _trackInfo.PitStopBase;
-                    pitStopMaxSpeed = _trackInfo.PitStopMaxSpeed;
-                    pitStopCornerSpeed = _trackInfo.PitStopCornerSpeed;
-                    pitStopBrakeDistance = _trackInfo.PitStopBrakeDistance;
-                    pitStopAcceleration = _trackInfo.PitStopAcceleration;
-                    trackHasAnimatedCrew = _trackInfo.HasAnimatedCrew;
-                    pitFastSide = _trackInfo.PitFastSide;
-                }
-
-
-                if (hasCutOff)
-                {
-                    cutoff = cutoffValue;
-                }
-                else
-                {
-                    cutoff = 0.02;
-                }
-
-                if (trackType == 0)
-                {
-                    if (trackConfig == "short oval")
-                    {
-                        trackType = 6;
-                    }
-                    else if (trackConfig == "medium oval")
-                    {
-                        trackType = 7;
-                    }
-                    else if (trackConfig == "super speedway")
-                    {
-                        trackType = 8;
-                    }
-                    else if (trackConfig == "dirt oval")
-                    {
-                        trackType = 5;
-                    }
-                    else if (trackConfig == "dirt road course")
-                    {
-                        trackType = 4;
-                    }
-                }
-
+                TrackAttributes();
             }
 
             //-----------------------------------------------------------------------------
             //----------------------CAR ATTRIBUTES UPDATE----------------------------------
             //-----------------------------------------------------------------------------
 
+            //p2pCount, object p2pStatus, object tireCompounds ==> local variables
 
             if (Base.counter == 14)
             {
 
                 //Resetting values to default
                 carId = "";
-                hasAntiStall = false;
-                hasDRS = false;
+                propHasAntiStall = false;
+                propHasDRS = false;
                 hasTCtog = false;
                 hasTCtimer = false;
                 TCoffPosition = -1;
                 hasABStog = false;
-                hasABS = false;
+                propHasABS = false;
                 hasTC = false;
                 ABSoffPosition = -1;
-                mapHigh = -1;
-                mapLow = -1;
+                propMapHigh = -1;
+                propMapLow = -1;
                 hasNoBoost = false;
-                hasOvertake = false;
-                rotaryType = "Single";
-                dashType = "Default";
-                shiftPoint1 = 0;
-                shiftPoint2 = 0;
-                shiftPoint3 = 0;
-                shiftPoint4 = 0;
-                shiftPoint5 = 0;
-                shiftPoint6 = 0;
-                shiftPoint7 = 0;
-                revLim = defaultRevLim;
-                idleRPM = 0;
-                clutchBitePoint = 40;
-                clutchSpin = 0;
-                clutchIdealRangeStart = 0;
-                clutchIdealRangeStop = 0;
-                clutchGearRelease = 1;
-                clutchTimeRelease = 0;
-                clutchGearReleased = 1;
-                clutchTimeReleased = 100;
-                highPower = false;
-                launchThrottle = 0;
+                propHasOvertake = false;
+                propRotaryType = "Single";
+                propDashType = "Default";
+                propShiftPoint1 = 0;
+                propShiftPoint2 = 0;
+                propShiftPoint3 = 0;
+                propShiftPoint4 = 0;
+                propShiftPoint5 = 0;
+                propShiftPoint6 = 0;
+                propShiftPoint7 = 0;
+                propRevLim = defaultRevLim;
+                propIdleRPM = 0;
+                propClutchBitePoint = 40;
+                propClutchSpin = 0;
+                propClutchIdealRangeStart = 0;
+                propClutchIdealRangeStop = 0;
+                propClutchGearRelease = 1;
+                propClutchTimeRelease = 0;
+                propClutchGearReleased = 1;
+                propClutchTimeReleased = 100;
+                propHighPower = false;
+                propLaunchThrottle = 0;
                 pitMaxSpeed = 1;
                 pitCornerSpeed = 1;
                 pitBrakeDistance = 1;
@@ -2071,7 +1514,7 @@ namespace DahlDesign.Plugin.iRacing
                 pitCrewType = CrewType.SingleTyre;
                 pitMultitask = true;
                 pitHasWindscreen = true;
-                animaionType = AnimationType.Analog;
+                propAnimationType = AnimationType.Analog;
                 revSpeed = 1;
 
 
@@ -2079,40 +1522,40 @@ namespace DahlDesign.Plugin.iRacing
                 if (_carInfo != null)
                 {
                     carId = _carInfo.Id;
-                    hasAntiStall = _carInfo.HasAntiStall;
-                    hasDRS = _carInfo.HasDRS;
+                    propHasAntiStall = _carInfo.HasAntiStall;
+                    propHasDRS = _carInfo.HasDRS;
                     hasTCtog = _carInfo.HasTCtog;
                     hasTCtimer = _carInfo.HasTCtimer;
                     TCoffPosition = _carInfo.TCOffPosition;
                     hasABStog = _carInfo.HasABStog;
-                    hasABS = _carInfo.HasABS;
+                    propHasABS = _carInfo.HasABS;
                     hasTC = _carInfo.HasTC;
                     ABSoffPosition = _carInfo.ABSOffPosition;
-                    mapHigh = _carInfo.MapHigh;
-                    mapLow = _carInfo.MapLow;
+                    propMapHigh = _carInfo.MapHigh;
+                    propMapLow = _carInfo.MapLow;
                     hasNoBoost = _carInfo.HasNoBoost;
-                    hasOvertake = _carInfo.HasOvertake;
-                    rotaryType = _carInfo.RotaryType;
-                    dashType = _carInfo.DashType;
-                    shiftPoint1 = _carInfo.ShiftPoint1;
-                    shiftPoint2 = _carInfo.ShiftPoint2;
-                    shiftPoint3 = _carInfo.ShiftPoint3;
-                    shiftPoint4 = _carInfo.ShiftPoint4;
-                    shiftPoint5 = _carInfo.ShiftPoint5;
-                    shiftPoint6 = _carInfo.ShiftPoint6;
-                    shiftPoint7 = _carInfo.ShiftPoint7;
-                    revLim = _carInfo.RevLim;
-                    idleRPM = _carInfo.IdleRPM;
-                    clutchBitePoint = _carInfo.ClutchBitePoint;
-                    clutchSpin = _carInfo.ClutchSpin;
-                    clutchIdealRangeStart = _carInfo.ClutchIdealRangeStart;
-                    clutchIdealRangeStop = _carInfo.ClutchIdealRangeStop;
-                    clutchGearRelease = _carInfo.ClutchGearRelease;
-                    clutchTimeRelease = _carInfo.ClutchTimeRelease;
-                    clutchGearReleased = _carInfo.ClutchGearReleased;
-                    clutchTimeReleased = _carInfo.ClutchTimeReleased;
-                    highPower = _carInfo.HighPower;
-                    launchThrottle = _carInfo.LaunchThrottle;
+                    propHasOvertake = _carInfo.HasOvertake;
+                    propRotaryType = _carInfo.RotaryType;
+                    propDashType = _carInfo.DashType;
+                    propShiftPoint1 = _carInfo.ShiftPoint1;
+                    propShiftPoint2 = _carInfo.ShiftPoint2;
+                    propShiftPoint3 = _carInfo.ShiftPoint3;
+                    propShiftPoint4 = _carInfo.ShiftPoint4;
+                    propShiftPoint5 = _carInfo.ShiftPoint5;
+                    propShiftPoint6 = _carInfo.ShiftPoint6;
+                    propShiftPoint7 = _carInfo.ShiftPoint7;
+                    propRevLim = _carInfo.RevLim;
+                    propIdleRPM = _carInfo.IdleRPM;
+                    propClutchBitePoint = _carInfo.ClutchBitePoint;
+                    propClutchSpin = _carInfo.ClutchSpin;
+                    propClutchIdealRangeStart = _carInfo.ClutchIdealRangeStart;
+                    propClutchIdealRangeStop = _carInfo.ClutchIdealRangeStop;
+                    propClutchGearRelease = _carInfo.ClutchGearRelease;
+                    propClutchTimeRelease = _carInfo.ClutchTimeRelease;
+                    propClutchGearReleased = _carInfo.ClutchGearReleased;
+                    propClutchTimeReleased = _carInfo.ClutchTimeReleased;
+                    propHighPower = _carInfo.HighPower;
+                    propLaunchThrottle = _carInfo.LaunchThrottle;
                     pitMaxSpeed = _carInfo.PitMaxSpeed;
                     pitCornerSpeed = _carInfo.PitCornerSpeed;
                     pitBrakeDistance = _carInfo.PitBrakeDistance;
@@ -2126,32 +1569,32 @@ namespace DahlDesign.Plugin.iRacing
                     pitCrewType = _carInfo.CrewType;
                     pitMultitask = _carInfo.PitMultitask;
                     pitHasWindscreen = _carInfo.PitHasWindscreen;
-                    animaionType = _carInfo.AnimationType;
+                    propAnimationType = _carInfo.AnimationType;
                     revSpeed = _carInfo.RevSpeed;
 
                 }
 
                 if (Base.Settings.DashType != "Automatic Selection")
                 {
-                    dashType = Base.Settings.DashType;
+                    propDashType = Base.Settings.DashType;
                 }
 
                 if (p2pCount != null)
                 {
-                    p2pCounter = ((int[])p2pCount)[myCarIdx];
+                    propP2pCounter = ((int[])p2pCount)[myCarIdx];
                 }
                 else
                 {
-                    p2pCounter = -1;
+                    propP2pCounter = -1;
                 }
 
                 if (p2pStatus != null)
                 {
-                    p2pActive = ((bool[])p2pStatus)[myCarIdx];
+                    propP2pActive = ((bool[])p2pStatus)[myCarIdx];
                 }
                 else
                 {
-                    p2pActive = false;
+                    propP2pActive = false;
                 }
 
                 if (tireCompounds != null)
@@ -2164,65 +1607,65 @@ namespace DahlDesign.Plugin.iRacing
                 }
 
                 //No pit stop tracks
-                if (trackType > 0 && trackType < 5)
+                if (propTrackType > 0 && propTrackType < 5)
                 {
-                    rotaryType = "Default";
+                    propRotaryType = "Default";
                 }
 
                 //Supercar gear ratio bite point setting
-                if (dashType == "Supercar")
+                if (propDashType == "Supercar")
                 {
                     switch (gearRatio)
                     {
                         case 0.85:
-                            clutchBitePoint = 28;
-                            clutchSpin = 0;
-                            clutchIdealRangeStart = 28;
-                            clutchIdealRangeStop = 31;
-                            launchThrottle = 100;
+                            propClutchBitePoint = 28;
+                            propClutchSpin = 0;
+                            propClutchIdealRangeStart = 28;
+                            propClutchIdealRangeStop = 31;
+                            propLaunchThrottle = 100;
 
                             break;
                         case 0.931:
-                            clutchBitePoint = 30.0;
-                            clutchSpin = 29.0;
-                            clutchIdealRangeStart = 29.5;
-                            clutchIdealRangeStop = 33;
-                            launchThrottle = 85;
+                            propClutchBitePoint = 30.0;
+                            propClutchSpin = 29.0;
+                            propClutchIdealRangeStart = 29.5;
+                            propClutchIdealRangeStop = 33;
+                            propLaunchThrottle = 85;
                             break;
                         case 0.96:
-                            clutchBitePoint = 30.0;
-                            clutchSpin = 29.5;
-                            clutchIdealRangeStart = 31.0;
-                            clutchIdealRangeStop = 34;
-                            launchThrottle = 85;
+                            propClutchBitePoint = 30.0;
+                            propClutchSpin = 29.5;
+                            propClutchIdealRangeStart = 31.0;
+                            propClutchIdealRangeStop = 34;
+                            propLaunchThrottle = 85;
                             break;
                         case 1:
-                            clutchBitePoint = 32.0;
-                            clutchSpin = 31.5;
-                            clutchIdealRangeStart = 32.0;
-                            clutchIdealRangeStop = 35;
-                            launchThrottle = 80;
+                            propClutchBitePoint = 32.0;
+                            propClutchSpin = 31.5;
+                            propClutchIdealRangeStart = 32.0;
+                            propClutchIdealRangeStop = 35;
+                            propLaunchThrottle = 80;
                             break;
                         case 1.042:
-                            clutchBitePoint = 34.0;
-                            clutchSpin = 33.0;
-                            clutchIdealRangeStart = 34.0;
-                            clutchIdealRangeStop = 36;
-                            launchThrottle = 75;
+                            propClutchBitePoint = 34.0;
+                            propClutchSpin = 33.0;
+                            propClutchIdealRangeStart = 34.0;
+                            propClutchIdealRangeStop = 36;
+                            propLaunchThrottle = 75;
                             break;
                         case 1.074:
-                            clutchBitePoint = 34.0;
-                            clutchSpin = 33.0;
-                            clutchIdealRangeStart = 35.0;
-                            clutchIdealRangeStop = 37;
-                            launchThrottle = 70;
+                            propClutchBitePoint = 34.0;
+                            propClutchSpin = 33.0;
+                            propClutchIdealRangeStart = 35.0;
+                            propClutchIdealRangeStop = 37;
+                            propLaunchThrottle = 70;
                             break;
                         case 1.13:
-                            clutchBitePoint = 36.0;
-                            clutchSpin = 35.0;
-                            clutchIdealRangeStart = 35.5;
-                            clutchIdealRangeStop = 38;
-                            launchThrottle = 67;
+                            propClutchBitePoint = 36.0;
+                            propClutchSpin = 35.0;
+                            propClutchIdealRangeStart = 35.5;
+                            propClutchIdealRangeStop = 38;
+                            propLaunchThrottle = 67;
                             break;
                     }
                 }
@@ -2233,210 +1676,12 @@ namespace DahlDesign.Plugin.iRacing
             //--------CHECK FOR BEST LAP--------------------------
             //----------------------------------------------------
 
-            LapRecords.lapFetch(ref findLapRecord, csvAdress, ref csvIndex, track, carModel, ref lapRecord, ref lapDeltaRecord, lapDeltaSections);
+            LapRecords.lapFetch(ref findLapRecord, csvAdress, ref csvIndex, track, carModel, ref propLapRecord, ref lapDeltaRecord, lapDeltaSections);
 
-            //----------------------------------------------------
-            //--------F3.5 DRS COUNT------------------------------
-            //----------------------------------------------------
-
-            DRSleft = 8 - myDRSCount;
-
-            if (DRSleft < 0 || session != "Race")
-            {
-                DRSleft = 0;
-            }
-
-            //Special considerations
-
-            //Indycar P2P
-
-            if (carId == "Dallara IR18")
-            {
-                if (p2pActive)
-                {
-                    revLim = 12300;
-                    shiftPoint1 = 12250;
-                    shiftPoint2 = 12270;
-                    shiftPoint3 = 12280;
-                    shiftPoint4 = 12280;
-                    shiftPoint5 = 12280;
-                }
-
-            }
-
-
-
-            //-----------------------------------------------
-            //--------------DRS------------------------------
-            //-----------------------------------------------
-            DRSpush = "";
-            switch (DRSState)
-            {
-                case 0:
-                    DRSpush = "None";
-                    break;
-                case 1:
-                    DRSpush = "Acquired";
-                    if (carId == "Formula Renault 3.5")
-                    {
-                        DRSpush = "None";
-                    }
-                    break;
-                case 2:
-                    DRSpush = "Ready";
-                    if (carId == "Formula Renault 3.5")
-                    {
-                        DRSpush = "Open";
-                    }
-                    break;
-                case 3:
-                    DRSpush = "Open";
-                    break;
-            }
-
-            //----------------------------------------------
-            //-------SHIFT LIGHT/SHIFT POINT PER GEAR-------
-            //----------------------------------------------
-
-
-
-            switch (gear)
-            {
-                case "1":
-                    currentShiftPoint = shiftPoint1;
-                    shiftPointAdjustment = 4;
-                    break;
-
-                case "2":
-                    currentShiftPoint = shiftPoint2;
-                    shiftPointAdjustment = 2;
-                    break;
-
-                case "3":
-                    currentShiftPoint = shiftPoint3;
-                    shiftPointAdjustment = 1.5;
-                    break;
-
-                case "4":
-                    currentShiftPoint = shiftPoint4;
-                    shiftPointAdjustment = 1;
-                    break;
-
-                case "5":
-                    currentShiftPoint = shiftPoint5;
-                    shiftPointAdjustment = 0.8;
-                    break;
-
-                case "6":
-                    currentShiftPoint = shiftPoint6;
-                    shiftPointAdjustment = 0.7;
-                    break;
-
-                case "7":
-                    currentShiftPoint = shiftPoint7;
-                    shiftPointAdjustment = 0.4;
-                    break;
-                case "8":
-                    currentShiftPoint = Convert.ToInt32(revLim);
-                    shiftPointAdjustment = 0;
-                    break;
-            }
-            double amplifier = 1;
-
-            if (gear == "N" && smoothGear == "N")
-            {
-                currentShiftPoint = shiftPoint1;
-                shiftPointAdjustment = 0;
-            }
-
-            if (boost || MGU > 200000)
-            {
-                amplifier = amplifier + 0.3;
-            }
-
-            if (hasDRS && DRSpush == "Open")
-            {
-                amplifier = amplifier + 0.15;
-            }
-
-            double revSpeedCopy = revSpeed * amplifier;
-
-            shiftLightRPM = currentShiftPoint - (Base.Settings.ReactionTime * shiftPointAdjustment * revSpeedCopy);
-            double throttleFraction = throttle - 30;
-            if (throttleFraction < 0)
-            {
-                throttleFraction = 0;
-            }
-            shiftLightRPM = shiftLightRPM + ((currentShiftPoint - shiftLightRPM) * (1 - throttleFraction / 70));
-            if (currentShiftPoint == 0)
-            {
-                shiftLightRPM = revLim;
-            }
-
-
-            if (rpm < shiftLightRPM)
-            {
-                reactionTime = globalClock;
-                reactionGear = gear;
-            }
-
-            if (gear != reactionGear && gear == "N")
-            {
-                reactionPush = globalClock.TotalMilliseconds - reactionTime.TotalMilliseconds - 40;
-                reactionGear = gear;
-            }
-
-            //-------------------------------------
-            //-------MCLAREN MP4-30 ERS TARGET-----
-            //-------------------------------------
-
-
-
-            if (carId == "Mclaren MP4-30" || carId == "Mercedes W12")
-            {
-                irData.Telemetry.TryGetValue("dcMGUKDeployMode", out object rawERSMode);
-                int ERSselectedMode = Convert.ToInt32(rawERSMode);
-                int W12ERS = ERSselectedMode;
-                int ERSstartMode = 0;
-                if (Base.GetProp("GameRawData.SessionData.CarSetup.DriveBrake.PowerUnitConfig.TargetBatterySoc") != null)
-                {
-                    ERSstartMode = Convert.ToInt32(Convert.ToString(Base.GetProp("GameRawData.SessionData.CarSetup.DriveBrake.PowerUnitConfig.TargetBatterySoc")).Substring(0, 2));
-                }
-
-                if (W12ERS != W12ERSRef)
-                {
-                    if (speed > ERSlimit)
-                    {
-                        ERSChangeCount--;
-                    }
-                    W12ERSRef = W12ERS;
-                    if (ERSChangeCount < 0)
-                    {
-                        ERSChangeCount = 0;
-                    }
-                }
-
-                if (ERSstartingLap)
-                {
-                    ERSreturnMode = ERSstartMode;
-                }
-
-                if (currentLap != ERSlapCounter)
-                {
-                    ERSlapCounter = currentLap;
-                    ERSreturnMode = ERSselectedMode;
-                    ERSstartingLap = false;
-                }
-
-                Base.SetProp("ERSCharges", ERSChangeCount);
-                Base.SetProp("ERSTarget", ERSreturnMode);
-            }
-            else
-            {
-                Base.SetProp("ERSTarget", 0);
-                Base.SetProp("ERSCharges", 0);
-            }
-
+            DRSCount();
+            DRS();
+            ShiftLight();
+            ERSTarget();
 
             //-------------------------------------
             //-------RX JOKER DETECTION------------
@@ -2444,178 +1689,23 @@ namespace DahlDesign.Plugin.iRacing
 
             if (onJokerLap)
             {
-                jokerThisLap = true;
+                propJokerThisLap = true;
             }
 
-            //----------------------------------
-            //----ACCELERATION STOPWATCH--------
-            //----------------------------------
-
-            if (gear != "N" && speed < 0.5 && rpm > 300)
-            {
-                accelerationStart = true;
-            }
-            else if (accelerationPremature == 1)
-            {
-                Base.SetProp("AccelerationTo200KPH", 0);
-            }
-            else if (accelerationPremature == 2)
-            {
-                Base.SetProp("AccelerationTo100KPH", 0);
-                Base.SetProp("AccelerationTo200KPH", 0);
-            }
-
-            if (!accelerationStart && speed > 0.5)
-            {
-                if (!oneHundered && !twoHundered)
-                {
-                    accelerationPremature = 2;
-                }
-                else if (!twoHundered)
-                {
-                    accelerationPremature = 1;
-                }
-            }
-
-            if (accelerationStart)
-            {
-                stopWatch = globalClock;
-                oneHundered = false;
-                twoHundered = false;
-                Base.SetProp("AccelerationTo100KPH", 0);
-                Base.SetProp("AccelerationTo200KPH", 0);
-                accelerationStart = false;
-            }
-
-            if (!accelerationStart && speed > 0.5)
-            {
-                if (!oneHundered)
-                {
-                    Base.SetProp("AccelerationTo100KPH", globalClock.TotalSeconds - stopWatch.TotalSeconds);
-                }
-                if (!twoHundered)
-                {
-                    Base.SetProp("AccelerationTo200KPH", globalClock.TotalSeconds - stopWatch.TotalSeconds);
-                }
-
-            }
-
-            if (speed > 100 && !oneHundered)
-            {
-                oneHundered = true;
-                accelerationPremature = 1;
-            }
-
-            if (speed > 200 && !twoHundered)
-            {
-                twoHundered = true;
-                accelerationPremature = 0;
-            }
+            Acceleration();
 
             //----------------------------------------------------
             //------------Spotter calculations--------------------
             //----------------------------------------------------
 
             iRacingSpotter.Spotter(Base.gameData, trackLength);
-            
-            //----------------------------------
-            //-------TRIGGERED STOPWATCH--------
-            //----------------------------------
 
-            // -- Idle clock
-            if (!watchOn && watchReset)
-            {
-                watchTimer = globalClock;
-                watchResult = 0;
-            }
-
-            // -- Clock is started
-            if (watchOn)
-            {
-                watchReset = false;
-                watchResult = globalClock.TotalSeconds - watchTimer.TotalSeconds + watchSnap;
-                watchStopper = true;
-            }
-
-            //Split is captured
-            if (watchOn && watchSplit)
-            {
-                if (watchSplitTime.TotalSeconds == 0)
-                {
-                    watchSplitTime = TimeSpan.FromSeconds(watchResult);
-                }
-                else
-                {
-                    watchSplitTime = TimeSpan.FromSeconds(0);
-                }
-                watchSplit = false;
-            }
-
-            // --Clock is stopped, begin clocking the waiting time
-            if (!watchOn && !watchReset)
-            {
-                watchTimer = globalClock;
-                if (watchStopper)
-                {
-                    watchSnap = watchResult;
-                    watchStopper = false;
-                }
-            }
-
-            Base.SetProp("StopWatchSplit", watchSplitTime);
-            Base.SetProp("StopWatch", TimeSpan.FromSeconds(watchResult));
-
-            //----------------------------------
-            //----------MISC--------------------
-            //----------------------------------
-
-            //Wheel slip
-            if (!Base.Settings.WheelSlipLEDs || slipLF < 25 || slipRF < 25)
-            {
-                slipLF = 0;
-                slipLR = 0;
-                slipRF = 0;
-                slipRR = 0;
-            }
-
-            if (slipLF < 40 && slipLF > slipRF)
-            {
-                slipRF = 0;
-                slipRR = 0;
-            }
-            else if (slipRF < 40 && slipRF > slipLF)
-            {
-                slipLF = 0;
-                slipLR = 0;
-            }
-
-            if (slipLF == 0 && slipLR == 0)
-            {
-                Base.SetProp("SlipLF", 0);
-                Base.SetProp("SlipRF", 0);
-                Base.SetProp("SlipLR", 0);
-                Base.SetProp("SlipRR", 0);
-            }
-
-
-            //OvertakeMode
-            overtakeMode = false;
-
-            if (throttle == 100 && rpm > 300 && speed > 10)
-            {
-                overtakeMode = true;
-            }
-
+            StopWatch();
+            WheelSlip();
+            OvertakeMode();
 
             //Idle property
-            if (sessionScreen && !spotMode)
-            {
-                iRIdle = true;
-            }
-            else
-            {
-                iRIdle = false;
-            }
+            propIRIdle = sessionScreen && !propSpotMode;
 
             //Identifying my class color and iRating
             if (Base.counter == 2)
@@ -2624,8 +1714,8 @@ namespace DahlDesign.Plugin.iRacing
                 {
                     if (Base.gameData.NewData.PlayerName == irData.SessionData.DriverInfo.CompetingDrivers[i].UserName)
                     {
-                        myClassColor = irData.SessionData.DriverInfo.CompetingDrivers[i].CarClassColor;
-                        myClassColorIndex = classColors.IndexOf(myClassColor);
+                        propMyClassColor = irData.SessionData.DriverInfo.CompetingDrivers[i].CarClassColor;
+                        myClassColorIndex = classColors.IndexOf(propMyClassColor);
                         myIR = Convert.ToInt32(irData.SessionData.DriverInfo.CompetingDrivers[i].IRating);
                         break;
                     }
@@ -2646,651 +1736,26 @@ namespace DahlDesign.Plugin.iRacing
             //--------------BUTTONS-------------------------------
             //----------------------------------------------------
 
-            //Pit commands
-            if (!Base.Settings.CoupleInCarToPit) // Ignore all of this if we explicitly state that coupling the InCar to Pit is off in settings)
-            {
-                pitMenuRequirementMet = true;
-            }
-            else if (
-                inCarRotary == 0 && pitMenuRotary != 0 ||
-                rotaryType == "Single" ||
-                (rotaryType != "Single" && rotaryType != "Default" && inCarRotary == 12))
-            {
-                pitMenuRequirementMet = true;
-            }
-            else
-            {
-                pitMenuRequirementMet = false;
-            }
+            PitCommands();
 
-            bool aheadPlayerReady = false;
-            bool behindPlayerReady = false;
+            FullScreen(ref launchPressed, ref propLaunchActive, ref launchReleased);
+            FullScreen(ref pitPressed, ref propPitScreenEnable, ref pitReleased);
+            FullScreen(ref pacePressed, ref propPaceCheck, ref paceReleased);
+            FullScreen(ref bitePointPressed, ref propBitePointAdjust, ref bitePointReleased);
 
-            if (Base.gameData.NewData.OpponentsAheadOnTrack.Count > 0)
-            {
-                aheadPlayerReady = true;
-            }
-            if (Base.gameData.NewData.OpponentsBehindOnTrack.Count > 0)
-            {
-                behindPlayerReady = true;
-            }
+            Radio();
 
-            if (rotaryType == "Single" && pitMenuRotary == 0)
-            {
-                pitMenuRotary = inCarRotary;
-            }
+            NoBoost();
 
-            if (plusButtonCheck)
-            {
-                if (pitMenuRotary == 1 && pitMenuRequirementMet)
-                {
-                    string pushPit = "";
+            TCoff();
 
-                    if (commandMaxFuel == 0)
-                    {
-                        pushPit = "#clear ws$";
-                    }
-                    else
-                    {
-                        pushPit = "#clear fuel " + Convert.ToString(commandMaxFuel) + "l ws$";
-                    }
+            TCEmulation();
 
-                    PitCommands.iRacingChat(pushPit);
-                }
-                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
-                {
-                    launchActive = !launchActive;
-                }
-                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#lf +3kpa rf +3kpa lr +3kpa rr +3kpa$");
-                }
-                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
-                    {
-                        PitCommands.iRacingChat("#lf +3kpa rf +3kpa$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#lf +3kpa lr +3kpa$");
-                    }
-                }
-                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
-                    {
-                        PitCommands.iRacingChat("#lr +3kpa rr +3kpa$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#rf +3kpa rr +3kpa$");
-                    }
-                }
-                else if (pitMenuRotary == 6 && pitMenuRequirementMet && aheadPlayerReady)
-                {
-                    PitCommands.iRacingChat("/" + Base.gameData.NewData.OpponentsAheadOnTrack[0].CarNumber + " " + Base.Settings.AheadPlayerText);
-                }
-                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#fuel +" + Base.Settings.SmallFuelIncrement + "l$");
-                }
-                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#fuel +" + Base.Settings.LargeFuelIncrement + "l$");
-                }
-                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
-                {
-                    watchSplit = true;
-                }
+            TCtoggle();
 
-                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
-                {
-                    Base.Settings.ShowMapEnabled = !Base.Settings.ShowMapEnabled;
-                }
+            ABStoggle();
 
-                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
-                {
-                    savePitTimerLock = true;
-                    savePitTimerSnap = slowestLapTimeSpanCopy;
-                }
-
-                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
-                {
-                    //pluginManager.TriggerAction("ShakeITBSV3Plugin.MainFeedbackLevelIncrement");
-                    fuelPerLapOffset = fuelPerLapOffset + Base.Settings.fuelOffsetIncrement;
-                }
-
-
-                plusButtonCheck = false;
-            }
-
-            if (minusButtonCheck)
-            {
-                if (pitMenuRotary == 1 && pitMenuRequirementMet)
-                {
-                    string pushPit = "";
-                    if (commandMinFuel == 0)
-                    {
-                        pushPit = "#clear ws$";
-                    }
-                    else
-                    {
-                        pushPit = "#clear fuel " + Convert.ToString(commandMinFuel) + "l ws$";
-                    }
-                    PitCommands.iRacingChat(pushPit);
-                }
-                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
-                {
-                    paceCheck = !paceCheck;
-                }
-                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#lf -3kpa rf -3kpa lr -3kpa rr -3kpa$");
-                }
-                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
-                    {
-                        PitCommands.iRacingChat("#rf -3kpa lf -3kpa$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#lf -3kpa lr -3kpa$");
-                    }
-                }
-                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
-                    {
-                        PitCommands.iRacingChat("#lr -3kpa rr -3kpa$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#rf -3kpa rr -3kpa$");
-                    }
-                }
-                else if (pitMenuRotary == 6 && pitMenuRequirementMet && behindPlayerReady)
-                {
-                    string driverText = "/#" + Base.gameData.NewData.OpponentsBehindOnTrack[0].CarNumber + " " + Base.Settings.BehindPlayerText;
-                    PitCommands.iRacingChat(driverText);
-                }
-                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#fuel -" + Base.Settings.SmallFuelIncrement + "l$");
-                }
-                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#fuel -" + Base.Settings.LargeFuelIncrement + "l$");
-                }
-
-                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
-                {
-                    watchTimer = globalClock;
-                    watchSnap = 0;
-                    watchReset = true;
-                    watchResult = 0;
-                    watchSplit = false;
-                }
-
-                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
-                {
-                    pitScreenEnable = !pitScreenEnable;
-
-                }
-
-                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
-                {
-                    savePitTimerLock = false;
-                }
-
-                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
-                {
-                    //pluginManager.TriggerAction("ShakeITBSV3Plugin.MainFeedbackLevelDecrement");
-                    if ((fuelAvgLap + fuelPerLapOffset - Base.Settings.fuelOffsetIncrement) > 0)
-                    {
-                        fuelPerLapOffset = fuelPerLapOffset - Base.Settings.fuelOffsetIncrement;
-                    }
-                    else
-                    {
-                        fuelPerLapOffset = -fuelAvgLap;
-                    }
-                }
-
-                minusButtonCheck = false;
-            }
-
-            if (OKButtonCheck)
-            {
-                if (pitMenuRotary == 1 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#clear$");
-                    fuelPerLapOffset = 0;
-                }
-                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#!fr$");
-                }
-                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#!cleartires$");
-                }
-                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#!lf !rf$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#!lf !lr$");
-                    }
-                    else
-                    {
-                        PitCommands.iRacingChat("#!cleartires$");
-                    }
-                }
-                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
-                {
-                    if (pitCrewType < CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#!lr !rr$");
-                    }
-                    else if (pitCrewType == CrewType.LeftRight)
-                    {
-                        PitCommands.iRacingChat("#!rf !rr$");
-                    }
-                    else
-                    {
-                        PitCommands.iRacingChat("#!cleartires$");
-                    }
-                }
-                else if (pitMenuRotary == 6 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#!ws$");
-                }
-                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#!fuel$");
-                }
-                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
-                {
-                    PitCommands.iRacingChat("#!fuel$");
-                }
-                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
-                {
-                    watchOn = !watchOn;
-                }
-                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
-                {
-                    spotMode = !spotMode;
-                }
-                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
-                {
-                    Base.Dashboard.DeltaScreen.Next();
-                }
-                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
-                {
-                    Base.Settings.fuelPerLapTarget = fuelAvgLap + fuelPerLapOffset;
-                }
-
-                OKButtonCheck = false;
-            }
-
-            //Launch control
-            if (launchPressed)
-            {
-                launchActive = !launchActive;
-                launchPressed = false;
-            }
-
-            if (launchReleased)
-            {
-                launchActive = false;
-                launchPressed = false;
-                launchReleased = false;
-            }
-
-            //Pit screen
-
-            if (pitPressed)
-            {
-                pitScreenEnable = !pitScreenEnable;
-                pitPressed = false;
-            }
-
-            if (pitReleased)
-            {
-                pitScreenEnable = false;
-                pitPressed = false;
-                pitReleased = false;
-            }
-
-            //Pace screen
-            if (pacePressed)
-            {
-                paceCheck = !paceCheck;
-                pacePressed = false;
-            }
-
-            if (paceReleased)
-            {
-                paceCheck = false;
-                pacePressed = false;
-                paceReleased = false;
-            }
-
-            //Bite adjust
-            if (bitePointPressed)
-            {
-                bitePointAdjust = !bitePointAdjust;
-                bitePointPressed = false;
-            }
-
-            if (bitePointReleased)
-            {
-                bitePointAdjust = false;
-                bitePointPressed = false;
-                bitePointReleased = false;
-            }
-
-            //Radio toggle/name
-
-            if (irData.Telemetry.RadioTransmitCarIdx != -1)
-            {
-                radioName = irData.SessionData.DriverInfo.Drivers[irData.Telemetry.RadioTransmitCarIdx].UserName;
-                radioIsSpectator = Convert.ToBoolean(irData.SessionData.DriverInfo.Drivers[irData.Telemetry.RadioTransmitCarIdx].IsSpectator);
-
-                if (radioName == aheadGlobal)
-                {
-                    radioPosition = realPosition - 1;
-                }
-                else if (radioName == behindGlobal)
-                {
-                    radioPosition = realPosition + 1;
-                }
-                else
-                {
-                    radioPosition = irData.Telemetry.CarIdxClassPosition[irData.Telemetry.RadioTransmitCarIdx];
-                }
-            }
-            else
-            {
-                radioName = "";
-                radioIsSpectator = false;
-            }
-
-            radioName = radioName.ToUpper();
-
-            if (irData.Telemetry.RadioTransmitCarIdx != -1)
-            {
-                radio = false;
-            }
-
-            //No boost
-            if (hasNoBoost)
-            {
-                if (speed > 80)
-                {
-                    NBspeedLim = true;
-                }
-
-                if (NBpressed)
-                {
-                    NBactive = !NBactive;
-                    NBpressed = false;
-                }
-
-                if (NBactive)
-                {
-                    NBvalue = true;
-                }
-
-                if (speed < 80 && NBspeedLim || boost || !NBactive || MGU > 0 || battery == 1)
-                {
-                    NBvalue = false;
-                    NBspeedLim = false;
-                    NBactive = false;
-                }
-            }
-
-            //TC off toggle
-            if (hasTCtimer)
-            {
-
-                if (!TCLimiter) //Idle state
-                {
-                    TCtimer = globalClock;
-                }
-
-                TCOffTimer = globalClock.TotalSeconds - TCtimer.TotalSeconds; //ticks/seconds, something = 0 in idle state
-
-                if (TCactive) //Activated, sets timer to 5, keeps tractionTimer updated as long as button is held, starts the 5 second count-up when released
-                {
-                    TCOffTimer = 5;
-                    TCtimer = globalClock;
-                    TCLimiter = true;
-                }
-
-                if (globalClock.TotalSeconds - TCtimer.TotalSeconds > 5) //Ends the 5 second count-up 
-                {
-                    TCLimiter = false;
-                }
-
-                TCPushTimer = 5 - TCOffTimer; //Refining the result
-                if (TCOffTimer > 5)
-                {
-                    TCPushTimer = 0;
-                }
-
-                if (TCOffTimer == 5)
-                {
-                    TCPushTimer = 5;
-                }
-                if (TCOffTimer == 0)
-                {
-                    TCPushTimer = 0;
-                }
-
-                Base.SetProp("TCoffTimer", TimeSpan.FromSeconds(TCPushTimer));
-
-            }
-            else
-            {
-                Base.SetProp("TCoffTimer", new TimeSpan(0));
-            }
-
-            //-----------------------------------------
-            //----------TC EMULATION-------------------
-            //-----------------------------------------
-
-            //Materials on road: 2
-
-            if (Base.Settings.WheelSlipLEDs || ((hasTCtog && TCswitch) || (hasTCtimer && TCPushTimer == 0)) && !(pitLimiter == 1 && speed > 0.9 * pitSpeedLimit) && TC != TCoffPosition)
-            {
-
-                if (TCrpm * 0.998 > rpm || TCdropCD > 0)  //Main filter
-                {
-                    TCdropCD++;
-                    if (TCdropCD > 3 && gear == TCgear)
-                    {
-                        TCdropCD = 0;
-                    }
-                }
-
-                int TCgearLimit = 25;
-
-                if (carId == "Porsche 911 GT3.R") //Rediculous wobbly RPM on gear shift on this car
-                {
-                    TCgearLimit = 40;
-                }
-
-                if (upshift || TCgearCD > 0 || downshift) //Stop registering TC after gear shift
-                {
-                    TCgearCD++;
-                }
-                if (TCgearCD > TCgearLimit)
-                {
-                    TCgearCD = 0;
-                    TCgear = gear;
-                    TCthrottle = throttle;
-                    TCrpm = rpm;
-                }
-
-
-                if (roadTextures.Contains(surface) && (Math.Abs(LRShockVel) > 0.13 || Math.Abs(RRShockVel) > 0.13))  //Filter on bumps
-                {
-                    tcBumpCounter = 1;
-                }
-                if (tcBumpCounter > 0)
-                {
-                    tcBump = true;
-                    tcBumpCounter++;
-                }
-                if (tcBumpCounter > 20)
-                {
-                    tcBumpCounter = 0;
-                    tcBump = false;
-                }
-
-                if ((TCthrottle == 0 && throttle > 0) || TCreleaseCD > 0)  //Filter on heavy throttle application
-                {
-                    TCreleaseCD++;
-                    if (TCreleaseCD > 25)
-                    {
-                        TCreleaseCD = 0;
-                    }
-                }
-
-
-                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0) && TCrpm * 0.995 > rpm && rpm < 0.98 * revLim && speed < 200 && rpm > idleRPM * 1.3)
-                {
-                    TCon = true;
-                    TCthrottle = throttle;
-                    TCrpm = rpm;
-                    TCduration = 0;
-                }
-                else if (TCdropCD == 0)
-                {
-                    TCthrottle = throttle;
-                    TCrpm = rpm;
-                }
-                if (TCon)
-                {
-                    TCduration++;
-                }
-                if (TCduration > 20)
-                {
-                    TCon = false;
-                    TCduration = 0;
-                }
-
-                //Running wheel slip through the filter
-                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (((TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0)) || (slipLF == 100 || slipRF == 100)))
-                {
-                    Base.SetProp("SlipLF", slipLF);
-                    Base.SetProp("SlipRF", slipRF);
-                    Base.SetProp("SlipLR", slipLR);
-                    Base.SetProp("SlipRR", slipRR);
-                }
-
-                if ((hasTCtog && TCswitch) || (hasTCtimer && TCPushTimer == 0)) //Push active TC, check again that calculations has been done because of TC, and not because of wheel slip calc
-                {
-                    Base.SetProp("TCActive", TCon);
-                }
-
-            }
-
-            if (!hasTC || TCPushTimer > 0 || (TC == TCoffPosition && TCoffPosition != -1) || (hasTCtog && !TCswitch))
-            {
-                Base.SetProp("TCToggle", false);
-            }
-
-            else
-            {
-                Base.SetProp("TCToggle", true);
-            }
-
-            //-----------------------------------------
-            //----------ABS TOGGLE---------------------
-            //-----------------------------------------
-
-            if (hasABStog || ABSoffPosition > -1)
-            {
-                if ((!ABSswitch && hasABStog) || ABSoffPosition == ABS)
-                {
-                    Base.SetProp("ABSToggle", false);
-                }
-                else
-                {
-                    Base.SetProp("ABSToggle", true);
-                }
-            }
-            else
-            {
-                Base.SetProp("ABSToggle", false);
-            }
-
-            //-------------------------------------
-            //-------RPM TRACKER-------------------
-            //-------------------------------------
-
-            if (rpm > 300 && rpm > RPMtracker && !upshift && clutch == 0)
-            {
-                RPMtracker = rpm;
-            }
-
-            if (RPMgear != gear && gear != "N")
-            {
-                RPMlastGear = RPMtracker;
-                RPMgearShift = true;
-
-                switch (RPMgear)
-                {
-                    case "1":
-                        lastShiftPoint = shiftPoint1;
-                        break;
-
-                    case "2":
-                        lastShiftPoint = shiftPoint2;
-                        break;
-
-                    case "3":
-                        lastShiftPoint = shiftPoint3;
-                        break;
-
-                    case "4":
-                        lastShiftPoint = shiftPoint4;
-                        break;
-
-                    case "5":
-                        lastShiftPoint = shiftPoint5;
-                        break;
-
-                    case "6":
-                        lastShiftPoint = shiftPoint6;
-                        break;
-
-                    case "7":
-                        lastShiftPoint = shiftPoint7;
-                        break;
-                }
-
-                RPMgear = gear;
-                RPMtracker = 0;
-                upshift = false;
-                downshift = false;
-            }
-
-            if (brake == 0)
-            {
-                RPMgearShift = false;
-            }
-
-            if (RPMgearShift && brake > 0 || pit == 1) //slowing down
-            {
-                RPMtracker = 0;
-            }
+            RPMTracker();
 
 
             //-----------------------------------------
@@ -3312,16 +1777,16 @@ namespace DahlDesign.Plugin.iRacing
                 hasPitted = true;
             }
 
-            lapStatus = 1; //Lap status calculation: 1 = Valid lap, 2 = Invalid lap, 3 = Out lap, 4 = Penalty, 5 = Pit lane
+            propLapStatus = 1; //Lap status calculation: 1 = Valid lap, 2 = Invalid lap, 3 = Out lap, 4 = Penalty, 5 = Pit lane
 
             if (outLap)
             {
-                lapStatus = 3;
+                propLapStatus = 3;
                 stintLapsCheck = true;
             }
             if ((incidents > roadOff || furled) && !outLap)
             {
-                lapStatus = 2;
+                propLapStatus = 2;
             }
 
             if (trackPosition > (1 - cutoff)) //Approaching start/finish line
@@ -3338,10 +1803,10 @@ namespace DahlDesign.Plugin.iRacing
                 roadOff = incidents;
                 outLap = false;
                 lineCross = true;
-                if (jokerThisLap)
+                if (propJokerThisLap)
                 {
                     jokerLapChecker = true;
-                    jokerThisLap = false;
+                    propJokerThisLap = false;
                 }
 
             }
@@ -3362,25 +1827,25 @@ namespace DahlDesign.Plugin.iRacing
                 lineCross = false;
             }
 
-            if (pit == 1 || iRIdle) //If in pit or idle
+            if (pit == 1 || propIRIdle) //If in pit or idle
             {
                 outLap = true;
                 roadOff = incidents;
-                lapStatus = 5;
+                propLapStatus = 5;
             }
             if (black == 1) //Black flag
             {
-                lapStatus = 4;
+                propLapStatus = 4;
             }
-            if (jokerThisLap || jokerLapChecker)
+            if (propJokerThisLap || jokerLapChecker)
             {
-                lapStatus = 6;
+                propLapStatus = 6;
             }
 
             //Sector calculations
             if (trackPosition > twoThirds)
             {
-                if (!(sectorExempt) && !(currentSector == 1 && lapStatus != 5)) //Not update sector if jump to exempt area of track or in driving backwards.
+                if (!(sectorExempt) && !(currentSector == 1 && propLapStatus != 5)) //Not update sector if jump to exempt area of track or in driving backwards.
                 {
                     currentSector = 3;
                     sector1to2 = false;
@@ -3388,7 +1853,7 @@ namespace DahlDesign.Plugin.iRacing
             }
             else if (trackPosition > oneThird && trackPosition < twoThirds)
             {
-                if (!(sectorExempt) && !(currentSector == 3 && lapStatus != 5))
+                if (!(sectorExempt) && !(currentSector == 3 && propLapStatus != 5))
                 {
                     currentSector = 2;
                     sector2to3 = false;
@@ -3396,7 +1861,7 @@ namespace DahlDesign.Plugin.iRacing
             }
             else
             {
-                if (!(sectorExempt) && !(currentSector == 2 && lapStatus != 5))
+                if (!(sectorExempt) && !(currentSector == 2 && propLapStatus != 5))
                 {
                     currentSector = 1;
                     sector1to2 = false;
@@ -3414,39 +1879,39 @@ namespace DahlDesign.Plugin.iRacing
 
                 if (!sector2to3)
                 {
-                    lastSectorStatusHolder = lapStatus;
-                    currentSector3Status = 1;
+                    lastSectorStatusHolder = propLapStatus;
+                    propCurrentSector3Status = 1;
                     sector2to3 = true;
                     sector3Incidents = incidents;
                 }
                 if (sector2to3 && sector3Incidents != incidents)
                 {
-                    if (lapStatus == 3)
+                    if (propLapStatus == 3)
                     {
-                        currentSector3Status = 2;
+                        propCurrentSector3Status = 2;
                         lastSectorStatusHolder = 2;
                     }
                     else
                     {
-                        currentSector3Status = lapStatus;
-                        lastSectorStatusHolder = lapStatus;
+                        propCurrentSector3Status = propLapStatus;
+                        lastSectorStatusHolder = propLapStatus;
                     }
 
                     sector3Incidents = incidents;
 
                 }
-                if (sector2to3 && lastSectorStatusHolder != lapStatus && lapStatus != 3)
+                if (sector2to3 && lastSectorStatusHolder != propLapStatus && propLapStatus != 3)
                 {
-                    currentSector3Status = lapStatus;
-                    lastSectorStatusHolder = lapStatus;
+                    propCurrentSector3Status = propLapStatus;
+                    lastSectorStatusHolder = propLapStatus;
                 }
 
                 Base.SetProp("CurrentSector3Time", TimeSpan.FromSeconds(currentSector3Time));
                 Base.SetProp("CurrentSector3Delta", 0);
 
-                if (currentSector2Time > 0 && sessionBestSector2 > 0)
+                if (currentSector2Time > 0 && propSessionBestSector2 > 0)
                 {
-                    double delta = currentSector2Time - sessionBestSector2;
+                    double delta = currentSector2Time - propSessionBestSector2;
                     Base.SetProp("CurrentSector2Delta", Math.Round(delta, 3));
                 }
                 else
@@ -3464,40 +1929,40 @@ namespace DahlDesign.Plugin.iRacing
                 }
                 if (!sector1to2)
                 {
-                    lastSectorStatusHolder = lapStatus;
+                    lastSectorStatusHolder = propLapStatus;
                     currentSector2Status = 1;
                     sector1to2 = true;
                     sector2Incidents = incidents;
                 }
                 if (sector1to2 && sector2Incidents != incidents)
                 {
-                    if (lapStatus == 3)
+                    if (propLapStatus == 3)
                     {
                         currentSector2Status = 2;
                         lastSectorStatusHolder = 2;
                     }
                     else
                     {
-                        currentSector2Status = lapStatus;
-                        lastSectorStatusHolder = lapStatus;
+                        currentSector2Status = propLapStatus;
+                        lastSectorStatusHolder = propLapStatus;
                     }
 
                     sector2Incidents = incidents;
 
                 }
-                if (sector1to2 && lastSectorStatusHolder != lapStatus && lapStatus != 3)
+                if (sector1to2 && lastSectorStatusHolder != propLapStatus && propLapStatus != 3)
                 {
-                    currentSector2Status = lapStatus;
-                    lastSectorStatusHolder = lapStatus;
+                    currentSector2Status = propLapStatus;
+                    lastSectorStatusHolder = propLapStatus;
                 }
 
                 Base.SetProp("CurrentSector2Time", TimeSpan.FromSeconds(currentSector2Time));
                 Base.SetProp("CurrentSector2Status", currentSector2Status);
                 Base.SetProp("CurrentSector2Delta", 0);
 
-                if (currentSector1Time > 0 && sessionBestSector1 > 0)
+                if (currentSector1Time > 0 && propSessionBestSector1 > 0)
                 {
-                    double delta = currentSector1Time - sessionBestSector1;
+                    double delta = currentSector1Time - propSessionBestSector1;
                     Base.SetProp("CurrentSector1Delta", Math.Round(delta, 3));
                 }
                 else
@@ -3508,7 +1973,7 @@ namespace DahlDesign.Plugin.iRacing
             else if (currentLapTimeStarted) //sector 1
             {
                 currentSector1Time = currentLapTime.TotalSeconds;
-                currentSector1Status = lapStatus;
+                currentSector1Status = propLapStatus;
 
                 Base.SetProp("CurrentSector1Time", TimeSpan.FromSeconds(currentSector1Time));
                 Base.SetProp("CurrentSector1Status", currentSector1Status);
@@ -3517,7 +1982,7 @@ namespace DahlDesign.Plugin.iRacing
 
             Base.SetProp("CurrentSector", currentSector);
 
-            if (pitBox > 0 && !hasApproached) //If jumped to pit box, not taking a proper inlap
+            if (propPitBox > 0 && !hasApproached) //If jumped to pit box, not taking a proper inlap
             {
                 if (trackPosition > 0.5)
                 {
@@ -3535,7 +2000,7 @@ namespace DahlDesign.Plugin.iRacing
                 currentSector3Time = 0;
                 currentSector1Status = 0;
                 currentSector2Status = 0;
-                currentSector3Status = 0;
+                propCurrentSector3Status = 0;
 
                 Base.SetProp("CurrentSector3Time", TimeSpan.FromSeconds(currentSector3Time));
                 Base.SetProp("CurrentSector3Delta", 0);
@@ -3554,8 +2019,8 @@ namespace DahlDesign.Plugin.iRacing
 
             if (lineCross && statusReadyToFetch)     //Updating values at finish line crossing
             {
-                lastStatusHolder = lapStatus;
-                lastSectorStatusHolder = currentSector3Status;
+                lastStatusHolder = propLapStatus;
+                lastSectorStatusHolder = propCurrentSector3Status;
                 statusReadyToFetch = false;
                 if (pit != 1)
                 {
@@ -3567,31 +2032,31 @@ namespace DahlDesign.Plugin.iRacing
             if (lastLapHolder != lastLapTime && (lastLapTime != new TimeSpan(0)))  //New lap time arrives, update certain lists and values
             {
                 ERSChangeCount = 4;
-                lapStatusList.Insert(0, lastStatusHolder);
+                propLapStatusList.Insert(0, lastStatusHolder);
 
                 if (lastStatusHolder == 1)
                 {
-                    validStintLaps++;
+                    propValidStintLaps++;
                 }
                 if (lastStatusHolder == 2)
                 {
-                    invalidStintLaps++;
+                    propInvalidStintLaps++;
                 }
                 if (lastStatusHolder == 6)
                 {
-                    jokerLapCount++;
+                    propJokerLapCount++;
                     jokerLapChecker = false;
                 }
 
-                lapStatusList.RemoveAt(8); //Making sure list doesnt grow untill infility
-                if (lapStatusList[0] != 0)
+                propLapStatusList.RemoveAt(8); //Making sure list doesnt grow untill infility
+                if (propLapStatusList[0] != 0)
                 {
-                    lapTimeList.Insert(0, lastLapTime);
+                    propLapTimeList.Insert(0, lastLapTime);
 
                     //Checking for session best lap
-                    if ((lapTimeList[0].TotalSeconds < sessionBestLap.TotalSeconds || sessionBestLap.TotalSeconds == 0) && lapStatusList[0] == 1)
+                    if ((propLapTimeList[0].TotalSeconds < sessionBestLap.TotalSeconds || sessionBestLap.TotalSeconds == 0) && propLapStatusList[0] == 1)
                     {
-                        sessionBestLap = lapTimeList[0];
+                        sessionBestLap = propLapTimeList[0];
                         for (int i = 0; i < lapDeltaSections + 1; i++) //Keep hold of the timings on that lap
                         {
                             lapDeltaSessionBest[i] = lapDeltaLast[i];
@@ -3599,63 +2064,63 @@ namespace DahlDesign.Plugin.iRacing
                     }
 
                     //Checking for lap record
-                    if (lapRecord.TotalSeconds == 0 && lapStatusList[0] == 1)
+                    if (propLapRecord.TotalSeconds == 0 && propLapStatusList[0] == 1)
                     {
-                        LapRecords.addLapRecord(track, carModel, lapTimeList[0].TotalMilliseconds, lapDeltaLast, csvAdress, ref csvIndex);
+                        LapRecords.addLapRecord(track, carModel, propLapTimeList[0].TotalMilliseconds, lapDeltaLast, csvAdress, ref csvIndex);
                         for (int i = 0; i < lapDeltaSections + 1; i++) //Keep hold of the timings on that lap
                         {
                             lapDeltaRecord[i] = lapDeltaLast[i];
                         }
                         findLapRecord = true;
                     }
-                    else if (lapTimeList[0].TotalSeconds < lapRecord.TotalSeconds && lapStatusList[0] == 1)
+                    else if (propLapTimeList[0].TotalSeconds < propLapRecord.TotalSeconds && propLapStatusList[0] == 1)
                     {
-                        LapRecords.replaceLapRecord(track, carModel, lapTimeList[0].TotalMilliseconds, lapDeltaLast, csvAdress, csvIndex);
+                        LapRecords.replaceLapRecord(track, carModel, propLapTimeList[0].TotalMilliseconds, lapDeltaLast, csvAdress, csvIndex);
                         findLapRecord = true;
                     }
 
-                    lapTimeList.RemoveAt(8); //Making sure list doesnt grow untill infinity
+                    propLapTimeList.RemoveAt(8); //Making sure list doesnt grow untill infinity
                 }
                 lastLapHolder = lastLapTime;
 
                 //Sectors
-                sector1StatusList.Insert(0, sector1StatusHolder);
-                sector1StatusList.RemoveAt(8);
-                sector1TimeList.Insert(0, sector1TimeHolder);
-                if ((sector1TimeList[0] < sessionBestSector1 || sessionBestSector1 == 0) && sector1StatusList[0] == 1)
+                propSector1StatusList.Insert(0, sector1StatusHolder);
+                propSector1StatusList.RemoveAt(8);
+                propSector1TimeList.Insert(0, sector1TimeHolder);
+                if ((propSector1TimeList[0] < propSessionBestSector1 || propSessionBestSector1 == 0) && propSector1StatusList[0] == 1)
                 {
-                    sessionBestSector1 = sector1TimeList[0];
+                    propSessionBestSector1 = propSector1TimeList[0];
                 }
-                sector1TimeList.RemoveAt(8);
+                propSector1TimeList.RemoveAt(8);
 
-                sector2StatusList.Insert(0, currentSector2Status);
-                sector2StatusList.RemoveAt(8);
-                sector2TimeList.Insert(0, currentSector2Time);
-                if ((sector2TimeList[0] < sessionBestSector2 || sessionBestSector2 == 0) && sector2StatusList[0] == 1)
+                propSector2StatusList.Insert(0, currentSector2Status);
+                propSector2StatusList.RemoveAt(8);
+                propSector2TimeList.Insert(0, currentSector2Time);
+                if ((propSector2TimeList[0] < propSessionBestSector2 || propSessionBestSector2 == 0) && propSector2StatusList[0] == 1)
                 {
-                    sessionBestSector2 = sector2TimeList[0];
+                    propSessionBestSector2 = propSector2TimeList[0];
                 }
-                sector2TimeList.RemoveAt(8);
+                propSector2TimeList.RemoveAt(8);
 
-                sector3StatusList.Insert(0, lastSectorStatusHolder);
-                sector3StatusList.RemoveAt(8);
-                sector3TimeList.Insert(0, lapTimeList[0].TotalSeconds - sector1TimeHolder - currentSector2Time);
-                currentSector3Time = sector3TimeList[0];
+                propSector3StatusList.Insert(0, lastSectorStatusHolder);
+                propSector3StatusList.RemoveAt(8);
+                propSector3TimeList.Insert(0, propLapTimeList[0].TotalSeconds - sector1TimeHolder - currentSector2Time);
+                currentSector3Time = propSector3TimeList[0];
                 Base.SetProp("CurrentSector3Time", TimeSpan.FromSeconds(currentSector3Time));
-                if (currentSector3Time > 0 && sessionBestSector3 > 0)
+                if (currentSector3Time > 0 && propSessionBestSector3 > 0)
                 {
-                    double delta = currentSector3Time - sessionBestSector3;
+                    double delta = currentSector3Time - propSessionBestSector3;
                     Base.SetProp("CurrentSector3Delta", Math.Round(delta, 3));
                 }
                 else
                 {
                     Base.SetProp("CurrentSector3Delta", 0);
                 }
-                if ((sector3TimeList[0] < sessionBestSector3 || sessionBestSector3 == 0) && sector3StatusList[0] == 1)
+                if ((propSector3TimeList[0] < propSessionBestSector3 || propSessionBestSector3 == 0) && propSector3StatusList[0] == 1)
                 {
-                    sessionBestSector3 = sector3TimeList[0];
+                    propSessionBestSector3 = propSector3TimeList[0];
                 }
-                sector3TimeList.RemoveAt(8);
+                propSector3TimeList.RemoveAt(8);
 
                 currentSector1Time = 0;
                 currentSector2Time = 0;
@@ -3663,108 +2128,24 @@ namespace DahlDesign.Plugin.iRacing
 
                 if (lastStatusHolder != 3)
                 {
-                    fuelTargetDeltas.Insert(0, fuelTargetDelta);
-                    fuelTargetDeltas.RemoveAt(8);
+                    propFuelTargetDeltas.Insert(0, fuelTargetDelta);
+                    propFuelTargetDeltas.RemoveAt(8);
 
                     fuelTargetDeltaCumulative = fuelTargetDeltaCumulative + fuelTargetDelta;
                 }
             }
 
-            //----------------------------------------------------
-            //------------Hotlap live position--------------------
-            //----------------------------------------------------
 
             if (Base.counter == 17)
             {
-                int position = 0;
-                for (int i = 0; i < opponents; i++)
-                {
-                    if (estimatedLapTime.TotalSeconds > 0 && Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds > 0 && estimatedLapTime.TotalSeconds > Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds && Base.gameData.NewData.Opponents[i].CarClass == myClass && !Base.gameData.NewData.Opponents[i].IsPlayer)
-                    {
-                        position++;
-                    }
-
-                }
-                if (opponents > 1 && !(session == "Race" && currentLap == 1))
-                {
-                    position++;
-                }
-
-                if (estimatedLapTime.TotalSeconds == 0)
-                {
-                    position = 0;
-                }
-
-                Base.SetProp("HotlapLivePosition", position);
-
+                Hotlap();
             }
 
             //----------------------------------------------------
             //---------Pit box location calculations--------------
             //----------------------------------------------------
 
-            boxApproach = false;
-
-            pitBox = (pitLocation - trackPosition) * trackLength;
-            if (pitLocation < 0.2 && trackPosition > 0.8)
-            {
-                pitBox = (pitLocation + (1 - trackPosition)) * trackLength;
-            }
-            else if (pitLocation > 0.8 && trackPosition < 0.2)
-            {
-                pitBox = -((1 - pitLocation) + trackPosition) * trackLength;
-            }
-
-            awayFromPits = -pitBox;
-
-            if (pitBox > -8 && pitBox < 33 && pit == 1 && pitStall != 1 && hasPitted == true) //Car is approaching the pit box, and can pass by 8 meters. 
-            {
-                boxApproach = true;
-                hasApproached = true;
-            }
-
-            if (Math.Abs(pitBox) < 2 && pit == 1)   //Car is in the pit box
-            {
-                pitBox = 1 - ((pitBox + 2) / 4);
-                validStintLaps = 0;
-                invalidStintLaps = 0;
-                stintLapsCheck = true;
-                fuelTargetDeltaCumulative = 0;
-            }
-            else pitBox = 0;
-
-            if (pitStall == 1) //Car has spawned or recieved pit stop
-            {
-                hasPitted = false;
-                currentFrontWing = wingFront;
-                currentRearWing = wingRear;
-                currentPWS = PWS;
-                currentTape = tape;
-                offTrack = false;
-                offTrackTimer = globalClock;
-            }
-            if (pit == 0)
-            {
-                hasApproached = false;
-            }
-
-
-            bool pitEntry = false;
-
-            if (pitLimiter == 1 && pit == 0 && stintLength > 1000)
-            {
-                pitEntry = true;
-            }
-
-            bool pitSpeeding = false;
-
-            if (pit == 1 && (Math.Round(speed, 0) - 2.5) > pitSpeedLimit)
-            {
-                pitSpeeding = true;
-            }
-
-            Base.SetProp("PitEntry", pitEntry);
-            Base.SetProp("PitSpeeding", pitSpeeding);
+            PitBox();
 
             //---------------------------------------------------------------
             //-------------Pace calculation, once pr. second-----------------
@@ -3775,9 +2156,9 @@ namespace DahlDesign.Plugin.iRacing
             {
                 List<double> lapListSeconds = new List<double> { };
                 double fastLap = 0;
-                for (int i = 0; i < lapTimeList.Count; i++)
+                for (int i = 0; i < propLapTimeList.Count; i++)
                 {
-                    lapListSeconds.Add(lapTimeList[i].TotalSeconds);
+                    lapListSeconds.Add(propLapTimeList[i].TotalSeconds);
                     if (fastLap == 0 || lapListSeconds[i] != 0 && lapListSeconds[i] < fastLap)
                     {
                         fastLap = lapListSeconds[i];
@@ -3788,9 +2169,9 @@ namespace DahlDesign.Plugin.iRacing
                 List<double> slowList = new List<double> { };
                 double thresholdLap = fastLap * 1.015;
                 double runOffLap = fastLap * 1.05;
-                for (int i = 0; i < lapTimeList.Count; i++)
+                for (int i = 0; i < propLapTimeList.Count; i++)
                 {
-                    if ((lapStatusList[i] < 3 && lapStatusList[i] != 0) && !(lapListSeconds[i] > (fastLap + 8) && lapListSeconds[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
+                    if ((propLapStatusList[i] < 3 && propLapStatusList[i] != 0) && !(lapListSeconds[i] > (fastLap + 8) && lapListSeconds[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
                     {
                         if (lapListSeconds[i] < thresholdLap)
                         {
@@ -3807,12 +2188,12 @@ namespace DahlDesign.Plugin.iRacing
 
                 if (lapListSeconds.Count > 1)
                 {
-                    if (lapListSeconds[0] > thresholdLap && lapListSeconds[1] > thresholdLap && lapStatusList[0] < 3 && lapStatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
+                    if (lapListSeconds[0] > thresholdLap && lapListSeconds[1] > thresholdLap && propLapStatusList[0] < 3 && propLapStatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
                     {
                         pace = (slowList[0] + slowList[1]) / 2;
                     }
 
-                    if (lapListSeconds[0] < fastLap * 1.005 && lapListSeconds[1] < fastLap * 1.005 && lapStatusList[0] == 1 && lapStatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
+                    if (lapListSeconds[0] < fastLap * 1.005 && lapListSeconds[1] < fastLap * 1.005 && propLapStatusList[0] == 1 && propLapStatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
                     {
                         pace = (fastList[0] + fastList[1]) / 2;
                     }
@@ -3839,11 +2220,11 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 33) //Sector 1 pace
             {
                 double fastLap = 0;
-                for (int i = 0; i < sector1TimeList.Count; i++)
+                for (int i = 0; i < propSector1TimeList.Count; i++)
                 {
-                    if (fastLap == 0 || sector1TimeList[i] != 0 && sector1TimeList[i] < fastLap)
+                    if (fastLap == 0 || propSector1TimeList[i] != 0 && propSector1TimeList[i] < fastLap)
                     {
-                        fastLap = sector1TimeList[i];
+                        fastLap = propSector1TimeList[i];
                     }
                 }
 
@@ -3853,22 +2234,22 @@ namespace DahlDesign.Plugin.iRacing
                 double runOffLap = fastLap * 1.05;
                 double sectorAverage = 0;
                 int sectorAverageCounter = 0;
-                for (int i = 0; i < sector1TimeList.Count; i++)
+                for (int i = 0; i < propSector1TimeList.Count; i++)
                 {
-                    if (sector1StatusList[i] < 3 && sector1StatusList[i] != 0)
+                    if (propSector1StatusList[i] < 3 && propSector1StatusList[i] != 0)
                     {
-                        sectorAverage = sectorAverage + sector1TimeList[i];
+                        sectorAverage = sectorAverage + propSector1TimeList[i];
                         sectorAverageCounter++;
                     }
-                    if ((sector1StatusList[i] < 3 && sector1StatusList[i] != 0) && !(sector1TimeList[i] > (fastLap + 8) && sector1TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
+                    if ((propSector1StatusList[i] < 3 && propSector1StatusList[i] != 0) && !(propSector1TimeList[i] > (fastLap + 8) && propSector1TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
                     {
-                        if (sector1TimeList[i] < thresholdLap)
+                        if (propSector1TimeList[i] < thresholdLap)
                         {
-                            fastList.Add(sector1TimeList[i]);
+                            fastList.Add(propSector1TimeList[i]);
                         }
                         else
                         {
-                            slowList.Add(sector1TimeList[i]);
+                            slowList.Add(propSector1TimeList[i]);
                         }
                     }
                 }
@@ -3882,19 +2263,19 @@ namespace DahlDesign.Plugin.iRacing
                 int valids = 0;
                 double sectorVariance = 0;
                 double sectorScore = 0;
-                for (int i = 0; i < sector1TimeList.Count; i++)
+                for (int i = 0; i < propSector1TimeList.Count; i++)
                 {
-                    if (sector1StatusList[i] < 3 && sector1StatusList[i] != 0)
+                    if (propSector1StatusList[i] < 3 && propSector1StatusList[i] != 0)
                     {
-                        if (sector1StatusList[i] == 1)
+                        if (propSector1StatusList[i] == 1)
                         {
                             valids++;
                         }
-                        if (sector1StatusList[i] == 2)
+                        if (propSector1StatusList[i] == 2)
                         {
                             invalids++;
                         }
-                        sum = sum + ((sector1TimeList[i] - sectorAverage) * (sector1TimeList[i] - sectorAverage));
+                        sum = sum + ((propSector1TimeList[i] - sectorAverage) * (propSector1TimeList[i] - sectorAverage));
                     }
                 }
 
@@ -3909,14 +2290,14 @@ namespace DahlDesign.Plugin.iRacing
                     }
                 }
 
-                if (sector1TimeList.Count > 1)
+                if (propSector1TimeList.Count > 1)
                 {
-                    if (sector1TimeList[0] > thresholdLap && sector1TimeList[1] > thresholdLap && sector1StatusList[0] < 3 && sector1StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
+                    if (propSector1TimeList[0] > thresholdLap && propSector1TimeList[1] > thresholdLap && propSector1StatusList[0] < 3 && propSector1StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
                     {
                         sector1Pace = (slowList[0] + slowList[1]) / 2;
                     }
 
-                    if (sector1TimeList[0] < fastLap * 1.005 && sector1TimeList[1] < fastLap * 1.005 && sector1StatusList[0] == 1 && sector1StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
+                    if (propSector1TimeList[0] < fastLap * 1.005 && propSector1TimeList[1] < fastLap * 1.005 && propSector1StatusList[0] == 1 && propSector1StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
                     {
                         sector1Pace = (fastList[0] + fastList[1]) / 2;
                     }
@@ -3930,11 +2311,11 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 43) //Sector 2 pace
             {
                 double fastLap = 0;
-                for (int i = 0; i < sector2TimeList.Count; i++)
+                for (int i = 0; i < propSector2TimeList.Count; i++)
                 {
-                    if (fastLap == 0 || sector2TimeList[i] != 0 && sector2TimeList[i] < fastLap)
+                    if (fastLap == 0 || propSector2TimeList[i] != 0 && propSector2TimeList[i] < fastLap)
                     {
-                        fastLap = sector2TimeList[i];
+                        fastLap = propSector2TimeList[i];
                     }
                 }
 
@@ -3944,22 +2325,22 @@ namespace DahlDesign.Plugin.iRacing
                 double runOffLap = fastLap * 1.05;
                 double sectorAverage = 0;
                 int sectorAverageCounter = 0;
-                for (int i = 0; i < sector2TimeList.Count; i++)
+                for (int i = 0; i < propSector2TimeList.Count; i++)
                 {
-                    if (sector2StatusList[i] < 3 && sector2StatusList[i] != 0)
+                    if (propSector2StatusList[i] < 3 && propSector2StatusList[i] != 0)
                     {
-                        sectorAverage = sectorAverage + sector2TimeList[i];
+                        sectorAverage = sectorAverage + propSector2TimeList[i];
                         sectorAverageCounter++;
                     }
-                    if ((sector2StatusList[i] < 3 && sector2StatusList[i] != 0) && !(sector2TimeList[i] > (fastLap + 8) && sector2TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
+                    if ((propSector2StatusList[i] < 3 && propSector2StatusList[i] != 0) && !(propSector2TimeList[i] > (fastLap + 8) && propSector2TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
                     {
-                        if (sector2TimeList[i] < thresholdLap)
+                        if (propSector2TimeList[i] < thresholdLap)
                         {
-                            fastList.Add(sector2TimeList[i]);
+                            fastList.Add(propSector2TimeList[i]);
                         }
                         else
                         {
-                            slowList.Add(sector2TimeList[i]);
+                            slowList.Add(propSector2TimeList[i]);
                         }
                     }
                 }
@@ -3974,19 +2355,19 @@ namespace DahlDesign.Plugin.iRacing
                 double sectorVariance = 0;
                 double sectorScore = 0;
 
-                for (int i = 0; i < sector2TimeList.Count; i++)
+                for (int i = 0; i < propSector2TimeList.Count; i++)
                 {
-                    if (sector2StatusList[i] < 3 && sector2StatusList[i] != 0)
+                    if (propSector2StatusList[i] < 3 && propSector2StatusList[i] != 0)
                     {
-                        if (sector2StatusList[i] == 1)
+                        if (propSector2StatusList[i] == 1)
                         {
                             valids++;
                         }
-                        if (sector2StatusList[i] == 2)
+                        if (propSector2StatusList[i] == 2)
                         {
                             invalids++;
                         }
-                        sum = sum + ((sector2TimeList[i] - sectorAverage) * (sector2TimeList[i] - sectorAverage));
+                        sum = sum + ((propSector2TimeList[i] - sectorAverage) * (propSector2TimeList[i] - sectorAverage));
                     }
                 }
 
@@ -4001,14 +2382,14 @@ namespace DahlDesign.Plugin.iRacing
                     }
                 }
 
-                if (sector2TimeList.Count > 1)
+                if (propSector2TimeList.Count > 1)
                 {
-                    if (sector2TimeList[0] > thresholdLap && sector2TimeList[1] > thresholdLap && sector2StatusList[0] < 3 && sector2StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
+                    if (propSector2TimeList[0] > thresholdLap && propSector2TimeList[1] > thresholdLap && propSector2StatusList[0] < 3 && propSector2StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
                     {
                         sector2Pace = (slowList[0] + slowList[1]) / 2;
                     }
 
-                    if (sector2TimeList[0] < fastLap * 1.005 && sector2TimeList[1] < fastLap * 1.005 && sector2StatusList[0] == 1 && sector2StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
+                    if (propSector2TimeList[0] < fastLap * 1.005 && propSector2TimeList[1] < fastLap * 1.005 && propSector2StatusList[0] == 1 && propSector2StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
                     {
                         sector2Pace = (fastList[0] + fastList[1]) / 2;
                     }
@@ -4022,11 +2403,11 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 53) //Sector 3 pace
             {
                 double fastLap = 0;
-                for (int i = 0; i < sector3TimeList.Count; i++)
+                for (int i = 0; i < propSector3TimeList.Count; i++)
                 {
-                    if (fastLap == 0 || sector3TimeList[i] != 0 && sector3TimeList[i] < fastLap)
+                    if (fastLap == 0 || propSector3TimeList[i] != 0 && propSector3TimeList[i] < fastLap)
                     {
-                        fastLap = sector3TimeList[i];
+                        fastLap = propSector3TimeList[i];
                     }
                 }
 
@@ -4036,22 +2417,22 @@ namespace DahlDesign.Plugin.iRacing
                 double runOffLap = fastLap * 1.05;
                 double sectorAverage = 0;
                 int sectorAverageCounter = 0;
-                for (int i = 0; i < sector3TimeList.Count; i++)
+                for (int i = 0; i < propSector3TimeList.Count; i++)
                 {
-                    if (sector3StatusList[i] < 3 && sector3StatusList[i] != 0)
+                    if (propSector3StatusList[i] < 3 && propSector3StatusList[i] != 0)
                     {
-                        sectorAverage = sectorAverage + sector3TimeList[i];
+                        sectorAverage = sectorAverage + propSector3TimeList[i];
                         sectorAverageCounter++;
                     }
-                    if ((sector3StatusList[i] < 3 && sector3StatusList[i] != 0) && !(sector3TimeList[i] > (fastLap + 8) && sector3TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
+                    if ((propSector3StatusList[i] < 3 && propSector3StatusList[i] != 0) && !(propSector3TimeList[i] > (fastLap + 8) && propSector3TimeList[i] > runOffLap)) //Excluding inlaps/outlaps/jokerlaps and laps with accidents (8 sec time loss if that corresponds to 5% or more of normal lap time)
                     {
-                        if (sector3TimeList[i] < thresholdLap)
+                        if (propSector3TimeList[i] < thresholdLap)
                         {
-                            fastList.Add(sector3TimeList[i]);
+                            fastList.Add(propSector3TimeList[i]);
                         }
                         else
                         {
-                            slowList.Add(sector3TimeList[i]);
+                            slowList.Add(propSector3TimeList[i]);
                         }
                     }
                 }
@@ -4066,19 +2447,19 @@ namespace DahlDesign.Plugin.iRacing
                 double sectorVariance = 0;
                 double sectorScore = 0;
 
-                for (int i = 0; i < sector3TimeList.Count; i++)
+                for (int i = 0; i < propSector3TimeList.Count; i++)
                 {
-                    if (sector3StatusList[i] < 3 && sector3StatusList[i] != 0)
+                    if (propSector3StatusList[i] < 3 && propSector3StatusList[i] != 0)
                     {
-                        if (sector3StatusList[i] == 1)
+                        if (propSector3StatusList[i] == 1)
                         {
                             valids++;
                         }
-                        if (sector3StatusList[i] == 2)
+                        if (propSector3StatusList[i] == 2)
                         {
                             invalids++;
                         }
-                        sum = sum + ((sector3TimeList[i] - sectorAverage) * (sector3TimeList[i] - sectorAverage));
+                        sum = sum + ((propSector3TimeList[i] - sectorAverage) * (propSector3TimeList[i] - sectorAverage));
                     }
                 }
 
@@ -4093,14 +2474,14 @@ namespace DahlDesign.Plugin.iRacing
                     }
                 }
 
-                if (sector3TimeList.Count > 1)
+                if (propSector3TimeList.Count > 1)
                 {
-                    if (sector3TimeList[0] > thresholdLap && sector3TimeList[1] > thresholdLap && sector3StatusList[0] < 3 && sector3StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
+                    if (propSector3TimeList[0] > thresholdLap && propSector3TimeList[1] > thresholdLap && propSector3StatusList[0] < 3 && propSector3StatusList[1] < 3 && slowList.Count > 1) //Pace is slowing down for some reason, fast acting
                     {
                         sector3Pace = (slowList[0] + slowList[1]) / 2;
                     }
 
-                    if (sector3TimeList[0] < fastLap * 1.005 && sector3TimeList[1] < fastLap * 1.005 && sector3StatusList[0] == 1 && sector3StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
+                    if (propSector3TimeList[0] < fastLap * 1.005 && propSector3TimeList[1] < fastLap * 1.005 && propSector3StatusList[0] == 1 && propSector3StatusList[1] == 1) //Pace is increasing, two fast valid Laps fast acting
                     {
                         sector3Pace = (fastList[0] + fastList[1]) / 2;
                     }
@@ -4114,42 +2495,9 @@ namespace DahlDesign.Plugin.iRacing
             //------------Updating delta values, once pr. second--------------
             //----------------------------------------------------------------
 
-            if (sessionBestSector1 > 0)
-            {
-                for (int i = 0; i < sector1TimeList.Count; i++)
-                {
-                    double delta = Math.Round(sector1TimeList[i] - sessionBestSector1, 3);
-                    if (sector1TimeList[i] > 0)
-                    {
-                        Base.SetProp("Lap0" + (i + 1) + "Sector1Delta", Math.Round(delta, 3));
-                    }
-                }
-            }
-
-            if (sessionBestSector2 > 0)
-            {
-                for (int i = 0; i < sector2TimeList.Count; i++)
-                {
-                    double delta = Math.Round(sector2TimeList[i] - sessionBestSector2, 3);
-                    if (sector2TimeList[i] > 0)
-                    {
-                        Base.SetProp("Lap0" + (i + 1) + "Sector2Delta", Math.Round(delta, 3));
-                    }
-                }
-            }
-
-            if (sessionBestSector3 > 0)
-            {
-                for (int i = 0; i < sector3TimeList.Count; i++)
-                {
-                    double delta = Math.Round(sector3TimeList[i] - sessionBestSector3, 3);
-                    if (sector3TimeList[i] > 0)
-                    {
-                        Base.SetProp("Lap0" + (i + 1) + "Sector3Delta", Math.Round(delta, 3));
-                    }
-                }
-            }
-
+            SectorDelta(1, propSessionBestSector1, propSector1TimeList);
+            SectorDelta(2, propSessionBestSector2, propSector2TimeList);
+            SectorDelta(3, propSessionBestSector3, propSector3TimeList);
 
             //---------------------------------------------------------------
             //------Real position calculations, twice pr. second-------------
@@ -4158,13 +2506,13 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 15 || Base.counter == 45)
             {
                 isRaceLeader = false;
-                realPosition = 1;
+                propRealPosition = 1;
 
                 if (session == "Lone Qualify" || session == "Open Qualify")
                 {
                     qualyPosition = myPosition;
-                    realPosition = myPosition;
-                    hotLapPosition = myPosition;
+                    propRealPosition = myPosition;
+                    propHotLapPosition = myPosition;
                 }
 
                 else if (session == "Race" && opponents > 1)
@@ -4178,17 +2526,17 @@ namespace DahlDesign.Plugin.iRacing
                             isRaceLeader = false;
                             if (Base.gameData.NewData.Opponents[i].CarClass == myClass)
                             {
-                                realPosition++;
+                                propRealPosition++;
                             }
                         }
-                        hotLapPosition = 1;
+                        propHotLapPosition = 1;
                         if (Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds < sessionBestLap.TotalSeconds && Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds > 0)
                         {
-                            hotLapPosition++;
+                            propHotLapPosition++;
                         }
                         if (sessionBestLap.TotalSeconds == 0)
                         {
-                            hotLapPosition = opponents;
+                            propHotLapPosition = opponents;
                         }
                     }
 
@@ -4196,20 +2544,20 @@ namespace DahlDesign.Plugin.iRacing
                     {
                         if (aheadClass == myClass && aheadGap != 0)
                         {
-                            realPosition = aheadClassPosition + 1;
+                            propRealPosition = aheadClassPosition + 1;
                         }
                         if (aheadClass != myClass || aheadGap == 0)
                         {
-                            realPosition = myPosition;
+                            propRealPosition = myPosition;
                         }
                     }
                     if (currentLapTime.TotalSeconds == 0 && qualyPosition > 0)
                     {
-                        realPosition = qualyPosition;
+                        propRealPosition = qualyPosition;
                     }
                     if (currentLapTime.TotalSeconds == 0 && qualyPosition == 0)
                     {
-                        realPosition = myPosition;
+                        propRealPosition = myPosition;
                     }
                     if (currentLapTime.TotalSeconds > 0)
                     {
@@ -4218,7 +2566,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     if (checkered == 1 && ((trackPosition > 0.1 && trackPosition < 0.15) || (currentLapTime.TotalSeconds > 5 && currentLapTime.TotalSeconds < 10)))
                     {
-                        raceFinished = true;
+                        propRaceFinished = true;
                     }
                     if ((lapRaceFinished || timeRaceFinished)) //Identify all cars with one lap more finished - keep in list, cannot decrement if players DC. 
                     {
@@ -4237,23 +2585,23 @@ namespace DahlDesign.Plugin.iRacing
                             }
                         }
 
-                        realPosition = position + finishedCars.Count;
+                        propRealPosition = position + finishedCars.Count;
                     }
                     if ((lapRaceFinished || timeRaceFinished) && trackPosition < 0.1 && checkered == 1)
                     {
-                        realPosition = 1 + finishedCars.Count;
+                        propRealPosition = 1 + finishedCars.Count;
                     }
 
-                    if (raceFinished)
+                    if (propRaceFinished)
                     {
-                        realPosition = myPosition;
+                        propRealPosition = myPosition;
                     }
 
                 }
                 else
                 {
-                    realPosition = myPosition;
-                    hotLapPosition = myPosition;
+                    propRealPosition = myPosition;
+                    propHotLapPosition = myPosition;
 
                 }
 
@@ -4326,11 +2674,11 @@ namespace DahlDesign.Plugin.iRacing
                     timeLeftSeconds = timeLeftSeconds - pitStopDuration;
                 }
 
-                qLap1Status = 0;
-                qLap2Status = 0;
+                propQLap1Status = 0;
+                propQLap2Status = 0;
                 Base.SetProp("QualyLap1Time", new TimeSpan(0));
                 Base.SetProp("QualyLap2Time", new TimeSpan(0));
-                warmup = false;
+                propWarmup = false;
 
 
                 for (int i = 0; i < opponents; i++)
@@ -4395,14 +2743,14 @@ namespace DahlDesign.Plugin.iRacing
 
                 myExpectedLapTime = pace;
 
-                if (lapRecord.TotalSeconds == 0 || (pace > 0 && pace > lapRecord.TotalSeconds * 1.05))
+                if (propLapRecord.TotalSeconds == 0 || (pace > 0 && pace > propLapRecord.TotalSeconds * 1.05))
                 {
                     inaccurateCalculations = true;
                 }
 
                 if (myExpectedLapTime == 0)
                 {
-                    myExpectedLapTime = lapRecord.TotalSeconds * 1.05;
+                    myExpectedLapTime = propLapRecord.TotalSeconds * 1.05;
                     inaccurateCalculations = true;
                 }
                 if (myExpectedLapTime == 0)
@@ -4420,7 +2768,7 @@ namespace DahlDesign.Plugin.iRacing
                 Base.SetProp("P1Name", leaderName);
                 Base.SetProp("ClassP1Gap", classLeaderGap);
                 Base.SetProp("ClassP1Name", classLeaderName);
-                if (trackType > 4)
+                if (propTrackType > 4)
                 {
                     Base.SetProp("LuckyDogGap", luckyDogGap);
                     Base.SetProp("LuckyDogName", luckyDogName);
@@ -4459,7 +2807,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     if (sessionState < 4)
                     {
-                        offTrack = false;
+                        propOffTrack = false;
                         offTrackTimer = globalClock;
                         timeLeftSeconds = totalSessionTime;
                         if (trackPosition > 0.5 || trackPosition == 0)
@@ -4752,7 +3100,7 @@ namespace DahlDesign.Plugin.iRacing
                             break;
                         }
                     }
-                    if (trackType > 4)
+                    if (propTrackType > 4)
                     {
                         Base.SetProp("LuckyDogRealGap", luckyDogRealGap);
                     }
@@ -4901,36 +3249,36 @@ namespace DahlDesign.Plugin.iRacing
             {
                 if (currentLapTime.TotalSeconds == 0) //Warmup lap
                 {
-                    warmup = true;
+                    propWarmup = true;
                     lapLapsRemaining = 2;
                     if (pit == 1)
                     {
                         lapLapsRemaining = 3;
                     }
-                    qLap1Status = 1;
-                    qLap2Status = 1;
+                    propQLap1Status = 1;
+                    propQLap2Status = 1;
                 }
                 else if (completedLaps == 0) //1st Q lap
                 {
                     lapLapsRemaining = 1;
-                    qLap1Status = 2;
+                    propQLap1Status = 2;
                     qLap1Time = currentLapTime;
-                    if (lapStatus > 1)
+                    if (propLapStatus > 1)
                     {
-                        qLap1Status = 3;
+                        propQLap1Status = 3;
                         qLap1Time = TimeSpan.FromSeconds(0);
                     }
                     qLapStarted2 = false;
                 }
                 else if (completedLaps == 1) //2nd Q lap
                 {
-                    if (lapTimeList.Count > 0)
+                    if (propLapTimeList.Count > 0)
                     {
-                        qLap1Time = lapTimeList[0];
+                        qLap1Time = propLapTimeList[0];
                     }
-                    if (qLap1Status == 2)
+                    if (propQLap1Status == 2)
                     {
-                        qLap1Status = 4;
+                        propQLap1Status = 4;
                     }
                     if (currentLapTime.TotalSeconds < 5 || (trackPosition > 0.1 && trackPosition < 0.11))
                     {
@@ -4941,23 +3289,23 @@ namespace DahlDesign.Plugin.iRacing
                         qLap2Time = currentLapTime;
                     }
                     lapLapsRemaining = 0;
-                    qLap2Status = 2;
-                    if (lapStatus > 1)
+                    propQLap2Status = 2;
+                    if (propLapStatus > 1)
                     {
-                        qLap2Status = 3;
+                        propQLap2Status = 3;
                         qLap2Time = TimeSpan.FromSeconds(0);
                     }
                 }
                 else if (completedLaps == 2) //Completed qualy
                 {
                     lapLapsRemaining = 0;
-                    if (lapTimeList.Count > 0 && qLap1Time != lapTimeList[0])
+                    if (propLapTimeList.Count > 0 && qLap1Time != propLapTimeList[0])
                     {
-                        qLap2Time = lapTimeList[0];
+                        qLap2Time = propLapTimeList[0];
                     }
-                    if (qLap2Status == 2)
+                    if (propQLap2Status == 2)
                     {
-                        qLap2Status = 4;
+                        propQLap2Status = 4;
                     }
                 }
 
@@ -5337,7 +3685,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 if (Base.counter != 4)
                 {
-                    fuelPerLap = fuelAvgLap + Math.Round(fuelPerLapOffset, 2);
+                    fuelPerLap = fuelAvgLap + Math.Round(propFuelPerLapOffset, 2);
                 }
                 else
                 {
@@ -5525,7 +3873,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     TimeSpan slowestLapTimeSpan = TimeSpan.FromSeconds(slowestLapTime);
 
-                    if (raceFinished)
+                    if (propRaceFinished)
                     {
                         fuelDelta = 0;
                     }
@@ -5557,10 +3905,10 @@ namespace DahlDesign.Plugin.iRacing
 
                         //Stint calculations
 
-                        if ((lapTimeList[0].TotalSeconds == 0 && pit == 0) || pitBox > 0 || (session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1)) //Update values only when in box, on grid or at end of pit lane for qualy laps. 
+                        if ((propLapTimeList[0].TotalSeconds == 0 && pit == 0) || propPitBox > 0 || (session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1)) //Update values only when in box, on grid or at end of pit lane for qualy laps. 
                         {
                             stintLapsTotal = latestPitLap - currentLap - 1; //Laps remaining of the stint
-                            if ((session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1) || (lapTimeList[0].TotalSeconds == 0 && pit == 0))
+                            if ((session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1) || (propLapTimeList[0].TotalSeconds == 0 && pit == 0))
                             {
                                 stintLapsTotal++;
                             }
@@ -5592,7 +3940,7 @@ namespace DahlDesign.Plugin.iRacing
                                     stintTimeTotal = TimeSpan.FromSeconds(timeLeft.TotalSeconds + (1 - (posWhenZero - truncPos)) * myExpectedLapTime);
                                 }
                             }
-                            if (lapTimeList[0].TotalSeconds == 0 && pit == 0)
+                            if (propLapTimeList[0].TotalSeconds == 0 && pit == 0)
                             {
                                 stintTimeTotal = TimeSpan.FromSeconds(stintTimeTotal.TotalSeconds);
                             }
@@ -5639,7 +3987,7 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 7 || Base.counter == 22 || Base.counter == 37 || Base.counter == 52)
             {
                 //Several conditions where stint timer will reset
-                if (iRIdle || pitBox > 0 || (session == "Race" && sessionState < 4) || (session == "Offline Testing" && pit == 1) || pushTimer.TotalHours > 10)
+                if (propIRIdle || propPitBox > 0 || (session == "Race" && sessionState < 4) || (session == "Offline Testing" && pit == 1) || pushTimer.TotalHours > 10)
                 {
                     stintTimer = globalClock;
                 }
@@ -5648,7 +3996,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 Base.SetProp("StintTimer", pushTimer);
 
-                int stintLaps = validStintLaps + invalidStintLaps + 1;
+                int stintLaps = propValidStintLaps + propInvalidStintLaps + 1;
 
                 if (stintLapsCheck)
                 {
@@ -5713,115 +4061,13 @@ namespace DahlDesign.Plugin.iRacing
             //--------------------------------------------------
 
 
-            if (brake > 0 && !brakeTrigger && brakeClock == 0)
-            {
-                brakeTriggerCheck = true;
-            }
-
-            if (brakeTrigger)
-            {
-                brakeClock++;
-                if (brakeMax < brake)
-                {
-                    brakeMax = brake;
-                }
-            }
-
-            if (brakeTriggerCheck)
-            {
-                brakeTrigger = true;
-                brakeTriggerCheck = false;
-                brakeCurve.Add(Math.Round(brake, 1));
-                brakeClock++;
-            }
-
-            if (brakeTrigger && brakeClock > (brakeClockBase + 5) && brakeCurve.Count < 41)
-            {
-                brakeCurve.Add(Math.Round(brake, 1));
-                brakeClockBase = brakeClock;
-            }
-
-            if (brakeCurve.Count == 40 && brakeTrigger)
-            {
-                brakeTrigger = false;
-                string result = string.Join(",", brakeCurve); //push result as string
-                Base.SetProp("BrakeCurveValues", result);
-
-                Base.SetProp("BrakeCurvePeak", brakeMax);
-
-                double auc = 0;
-                for (int i = 0; i < 40; i++)
-                {
-                    auc = auc + (0.1 * brakeCurve[i]);
-                }
-                Base.SetProp("BrakeCurveAUC", Math.Round(auc, 1));
-            }
-            if (brakeCurve.Count == 40 && brake == 0)
-            {
-                brakeCurve.Clear();
-                brakeClock = 0;
-                brakeClockBase = 0;
-                brakeMax = 0;
-            }
+            BrakeCurve();
 
             //--------------------------------------------------
             //--------------------THROTTLE CURVE-------------------
             //--------------------------------------------------
 
-            if (throttle > 0 && throttle < 10 && !throttleTrigger && throttleClock == 0)
-            {
-                throttleTriggerCheck = true;
-            }
-
-            if (throttleTrigger)
-            {
-                throttleClock++;
-            }
-
-            if (throttleTriggerCheck)
-            {
-                throttleTrigger = true;
-                throttleTriggerCheck = false;
-                throttleCurve.Add(Math.Round(throttle, 1));
-                throttleClock++;
-            }
-
-            if (throttleTrigger && throttleClock > (throttleClockBase + 3) && throttleCurve.Count < 41)
-            {
-                throttleCurve.Add(Math.Round(throttle, 1));
-                throttleClockBase = throttleClock;
-            }
-
-            if (throttleCurve.Count == 40 && throttleTrigger)
-            {
-                throttleTrigger = false;
-                string result = string.Join(",", throttleCurve); //push result as string
-                Base.SetProp("ThrottleCurveValues", result);
-
-                double agro = 0;
-                for (int i = 0; i < 40; i++)
-                {
-                    if (throttleCurve[i] != 100)
-                    {
-                        agro++;
-                    }
-                    else if (throttleCurve[i] == 100)
-                    {
-                        break;
-                    }
-                }
-                if (agro == 40)
-                {
-                    agro = 0;
-                }
-                Base.SetProp("ThrottleAgro", Math.Round((0.06666666667 * agro), 2));
-            }
-            if (throttleCurve.Count == 40 && throttle == 0)
-            {
-                throttleCurve.Clear();
-                throttleClock = 0;
-                throttleClockBase = 0;
-            }
+            ThrottleCurve();
 
 
 
@@ -5989,12 +4235,12 @@ namespace DahlDesign.Plugin.iRacing
 
                 //establish toggle bools, front/rear/left/right/all
 
-                bool pitToggleFront = LFTog && RFTog;
-                bool pitToggleRear = LRTog && RRTog;
-                bool pitToggleLeft = LFTog && LRTog;
-                bool pitToggleRight = RFTog && RRTog;
+                bool pitToggleFront = propLFTog && propRFTog;
+                bool pitToggleRear = propLRTog && propRRTog;
+                bool pitToggleLeft = propLFTog && propLRTog;
+                bool pitToggleRight = propRFTog && propRRTog;
 
-                int totalTireNumber = Convert.ToInt16(LFTog) + Convert.ToInt16(RFTog) + Convert.ToInt16(LRTog) + Convert.ToInt16(RRTog);
+                int totalTireNumber = Convert.ToInt16(propLFTog) + Convert.ToInt16(propRFTog) + Convert.ToInt16(propLRTog) + Convert.ToInt16(propRRTog);
 
                 if (carHasAnimatedCrew && trackHasAnimatedCrew)
                 {
@@ -6016,7 +4262,7 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             tireTime = pitBaseTime * 3 + pitSlowAdd;
                         }
-                        else if (totalTireNumber == 2 && ((pitFastSide == "Left" && (RFTog || RRTog)) || (pitFastSide == "Right" && (LFTog || LRTog))))
+                        else if (totalTireNumber == 2 && ((pitFastSide == "Left" && (propRFTog || propRRTog)) || (pitFastSide == "Right" && (propLFTog || propLRTog))))
                         {
                             tireTime = pitBaseTime * 2 + (2 * pitSlowAdd / 3);
                         }
@@ -6024,7 +4270,7 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             tireTime = pitBaseTime * 2 - (pitSlowAdd / 3);
                         }
-                        else if (totalTireNumber == 1 && ((pitFastSide == "Left" && (RFTog || RRTog)) || (pitFastSide == "Right" && (LFTog || LRTog))))
+                        else if (totalTireNumber == 1 && ((pitFastSide == "Left" && (propRFTog || propRRTog)) || (pitFastSide == "Right" && (propLFTog || propLRTog))))
                         {
                             tireTime = pitBaseTime + pitSlowAdd;
                         }
@@ -6036,7 +4282,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     else if (pitCrewType == CrewType.FrontRear)
                     {
-                        if (totalTireNumber == 4 || (totalTireNumber == 3 && ((pitFastSide == "Left" && ((pitToggleFront && LRTog) || (pitToggleRear && LFTog))) || (pitFastSide == "Right" && ((pitToggleFront && RRTog) || (pitToggleRear && RFTog)))))
+                        if (totalTireNumber == 4 || (totalTireNumber == 3 && ((pitFastSide == "Left" && ((pitToggleFront && propLRTog) || (pitToggleRear && propLFTog))) || (pitFastSide == "Right" && ((pitToggleFront && propRRTog) || (pitToggleRear && propRFTog)))))
                            || (totalTireNumber == 2 && ((pitFastSide == "Left" && pitToggleRight) || (pitFastSide == "Right" && pitToggleLeft))))
                         {
                             tireTime = pitBaseTime * 2 + (2 * pitSlowAdd / 3);
@@ -6045,7 +4291,7 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             tireTime = pitBaseTime * 2 - (pitSlowAdd / 3);
                         }
-                        else if (totalTireNumber == 2 || totalTireNumber == 1 && ((pitFastSide == "Left" && (RFTog || RRTog)) || (pitFastSide == "Right" && (LFTog || LRTog))))
+                        else if (totalTireNumber == 2 || totalTireNumber == 1 && ((pitFastSide == "Left" && (propRFTog || propRRTog)) || (pitFastSide == "Right" && (propLFTog || propLRTog))))
                         {
                             tireTime = pitBaseTime + pitSlowAdd;
                         }
@@ -6061,11 +4307,11 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             tireTime = pitBaseTime * 2 + (2 * pitSlowAdd / 3);
                         }
-                        else if ((pitFastSide == "Left" && (pitToggleRight || RFTog || RRTog)) || (pitFastSide == "Right" && (pitToggleLeft || LFTog || LRTog)))
+                        else if ((pitFastSide == "Left" && (pitToggleRight || propRFTog || propRRTog)) || (pitFastSide == "Right" && (pitToggleLeft || propLFTog || propLRTog)))
                         {
                             tireTime = pitBaseTime + pitSlowAdd;
                         }
-                        else if (totalTireNumber == 2 || totalTireNumber == 1 && ((pitFastSide == "Left" && (RFTog || RRTog)) || (pitFastSide == "Right" && (LFTog || LRTog))))
+                        else if (totalTireNumber == 2 || totalTireNumber == 1 && ((pitFastSide == "Left" && (propRFTog || propRRTog)) || (pitFastSide == "Right" && (propLFTog || propLRTog))))
                         {
                             tireTime = pitBaseTime + pitSlowAdd;
                         }
@@ -6088,7 +4334,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 double fuelTime = 1 + (plannedFuel / pitFuelFillRate) + 0.2;
 
-                if (!fuelTog)
+                if (!propfuelTog)
                 {
                     fuelTime = 0;
                 }
@@ -6099,19 +4345,19 @@ namespace DahlDesign.Plugin.iRacing
                     oldFuelValue = fuel;
                 }
 
-                if (oldFuelValue >= fuel || !fuelTog || oldFuelValue == 0)
+                if (oldFuelValue >= fuel || !propfuelTog || oldFuelValue == 0)
                 {
                     oldFuelValue = fuel;
                 }
 
                 double fuelTarget = oldFuelValue;
-                if (fuelTog)
+                if (propfuelTog)
                 {
                     fuelTarget = fuelTarget + plannedFuel;
                 }
 
                 double WStimer = 0;
-                if (pitHasWindscreen && WSTog)
+                if (pitHasWindscreen && propWSTog)
                 {
                     WStimer = 2.5;
                 }
@@ -6122,7 +4368,7 @@ namespace DahlDesign.Plugin.iRacing
                 double powersteerTime = 0;
 
                 //Front wing
-                double currentFrontWingC = Math.Abs(currentFrontWing - wingFront);
+                double currentFrontWingC = Math.Abs(propCurrentFrontWing - wingFront);
                 if (carId == "Dallara IR18")
                 {
                     currentFrontWingC = currentFrontWingC * 10;
@@ -6134,7 +4380,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
 
                 //Rear wing
-                double currentRearWingC = Math.Abs(currentRearWing - wingRear);
+                double currentRearWingC = Math.Abs(propCurrentRearWing - wingRear);
                 if (carId == "Dallara IR18")
                 {
                     currentRearWingC = currentRearWingC * 10;
@@ -6154,7 +4400,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
 
                 //Tape
-                int currentTapeC = Math.Abs(currentTape - tape);
+                int currentTapeC = Math.Abs(propCurrentTape - tape);
 
                 if (currentTapeC > 0)
                 {
@@ -6176,7 +4422,7 @@ namespace DahlDesign.Plugin.iRacing
                         pitTime = adjustmentTime;
                     }
 
-                    if (fuelTog && totalTireNumber > 0)
+                    if (propfuelTog && totalTireNumber > 0)
                     {
                         pitTime = pitTime - pitSlowAdd;
                     }
@@ -6531,67 +4777,67 @@ namespace DahlDesign.Plugin.iRacing
             //-----------------------------------------------------------------------------
 
             //Stuf that happens when idle
-            if (iRIdle)
+            if (propIRIdle)
             {
                 findLapRecord = true;
                 csvIndex = 0;
-                currentFrontWing = 0;
-                currentRearWing = 0;
+                propCurrentFrontWing = 0;
+                propCurrentRearWing = 0;
                 currentPWS = 0;
-                currentTape = 0;
-                pitBox = 0.5;
+                propCurrentTape = 0;
+                propPitBox = 0.5;
                 hasPitted = false;
-                validStintLaps = 0;
-                invalidStintLaps = 0;
+                propValidStintLaps = 0;
+                propInvalidStintLaps = 0;
                 fuelTargetDeltaCumulative = 0;
-                raceFinished = false;
-                jokerThisLap = false;
+                propRaceFinished = false;
+                propJokerThisLap = false;
                 jokerLapChecker = false;
                 finishedCars = new List<string> { };
                 fuelTargetCheck = false;
                 oldFuelValue = 0;
                 NBactive = false;
-                NBvalue = false;
+                propNBvalue = false;
                 NBspeedLim = false;
                 ERSlapCounter = currentLap;
                 ERSstartingLap = true;
                 TCon = false;
                 TCduration = 0;
-                offTrack = false;
+                propOffTrack = false;
                 commandMinFuel = 0;
                 commandMaxFuel = 500;
-                LEDwarningActive = false;
+                propLEDwarningActive = false;
                 tcBump = false;
                 tcBumpCounter = 0;
 
                 //Props that need refresh
-                Base.SetProp("TCActive", false);
+                propTCactive = false;
 
                 //Session or car or track change
                 if (carModelHolder != carModel || trackHolder != track || sessionHolder != session)
                 {
                     findLapRecord = true;
                     csvIndex = 0;
-                    IRchange = 0;
+                    propIRchange = 0;
                     ERSChangeCount = 4;
                     savePitTimerLock = false;
                     savePitTimerSnap = new TimeSpan(0);
                     slowestLapTimeSpanCopy = new TimeSpan(0);
-                    lapTimeList = new List<TimeSpan> { listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller }; //Reset lap and status lists
-                    lapStatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector1TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector2TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector3TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector1StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector2StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sector3StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    fuelTargetDeltas = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
-                    sessionBestSector1 = 0;
-                    sessionBestSector2 = 0;
-                    sessionBestSector3 = 0;
+                    propLapTimeList = new List<TimeSpan> { listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller, listFiller }; //Reset lap and status lists
+                    propLapStatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector1TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector2TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector3TimeList = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector1StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector2StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSector3StatusList = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propFuelTargetDeltas = new List<double> { 0, 0, 0, 0, 0, 0, 0, 0 };
+                    propSessionBestSector1 = 0;
+                    propSessionBestSector2 = 0;
+                    propSessionBestSector3 = 0;
                     sessionBestLap = new TimeSpan(0);
-                    qLap1Status = 0;
-                    qLap2Status = 0;
+                    propQLap1Status = 0;
+                    propQLap2Status = 0;
                     qLap1Time = new TimeSpan(0);
                     qLap2Time = new TimeSpan(0);
                     lapRaceFinished = false;
@@ -6601,14 +4847,14 @@ namespace DahlDesign.Plugin.iRacing
                     isRaceLeader = false;
                     isLapLimited = false;
                     isTimeLimited = false;
-                    jokerLapCount = 0;
+                    propJokerLapCount = 0;
                     Base.SetProp("P1Finished", false);
                     minFuelPush = 0;
                     maxFuelPush = 0;
                     qLapStarted2 = false;
 
                     //Props that need refresh
-                    Base.SetProp("TCActive", false);
+                    propTCactive = false;
 
                     //Resetting relGap list
                     if (Base.counter == 59)
@@ -6681,7 +4927,7 @@ namespace DahlDesign.Plugin.iRacing
 
             //Stuf that happens when not idle
 
-            if (!iRIdle)
+            if (!propIRIdle)
             {
                 carModelHolder = carModel; //Updating choice of car, track and session
                 trackHolder = track;
@@ -6691,15 +4937,1476 @@ namespace DahlDesign.Plugin.iRacing
             //-----------------------------------------------------------------------------
             //----------------------SETTING GLOBAL PROPERTY VALUES-------------------------
             //-----------------------------------------------------------------------------
-            
-            if (sessionBestSector1 > 0 && sessionBestSector2 > 0 && sessionBestSector3 > 0)
+
+            if (propSessionBestSector1 > 0 && propSessionBestSector2 > 0 && propSessionBestSector3 > 0)
             {
-                optimalLapTime = TimeSpan.FromSeconds(sessionBestSector1 + sessionBestSector2 + sessionBestSector3);
+                optimalLapTime = TimeSpan.FromSeconds(propSessionBestSector1 + propSessionBestSector2 + propSessionBestSector3);
             }
             else
             {
-                optimalLapTime =  new TimeSpan(0);
+                optimalLapTime = new TimeSpan(0);
             }
+        }
+
+        /// <summary>
+        /// THROTTLE CURVE
+        /// </summary>
+        private void ThrottleCurve()
+        {
+            if (throttle > 0 && throttle < 10 && !throttleTrigger && throttleClock == 0)
+            {
+                throttleTriggerCheck = true;
+            }
+
+            if (throttleTrigger)
+            {
+                throttleClock++;
+            }
+
+            if (throttleTriggerCheck)
+            {
+                throttleTrigger = true;
+                throttleTriggerCheck = false;
+                throttleCurve.Add(Math.Round(throttle, 1));
+                throttleClock++;
+            }
+
+            if (throttleTrigger && throttleClock > (throttleClockBase + 3) && throttleCurve.Count < 41)
+            {
+                throttleCurve.Add(Math.Round(throttle, 1));
+                throttleClockBase = throttleClock;
+            }
+
+            if (throttleCurve.Count == 40 && throttleTrigger)
+            {
+                throttleTrigger = false;
+                string result = string.Join(",", throttleCurve); //push result as string
+                propThrottleCurveValues = result;
+
+                double agro = 0;
+                for (int i = 0; i < 40; i++)
+                {
+                    if (throttleCurve[i] != 100)
+                    {
+                        agro++;
+                    }
+                    else if (throttleCurve[i] == 100)
+                    {
+                        break;
+                    }
+                }
+                if (agro == 40)
+                {
+                    agro = 0;
+                }
+                propThrottleAgro = Math.Round((0.06666666667 * agro), 2);
+            }
+            if (throttleCurve.Count == 40 && throttle == 0)
+            {
+                throttleCurve.Clear();
+                throttleClock = 0;
+                throttleClockBase = 0;
+            }
+        }
+
+        /// <summary>
+        /// BRAKE CURVE
+        /// </summary>
+        private void BrakeCurve()
+        {
+            if (brake > 0 && !brakeTrigger && brakeClock == 0)
+            {
+                brakeTriggerCheck = true;
+            }
+
+            if (brakeTrigger)
+            {
+                brakeClock++;
+                if (propBrakeMax < brake)
+                {
+                    propBrakeMax = brake;
+                }
+            }
+
+            if (brakeTriggerCheck)
+            {
+                brakeTrigger = true;
+                brakeTriggerCheck = false;
+                brakeCurve.Add(Math.Round(brake, 1));
+                brakeClock++;
+            }
+
+            if (brakeTrigger && brakeClock > (brakeClockBase + 5) && brakeCurve.Count < 41)
+            {
+                brakeCurve.Add(Math.Round(brake, 1));
+                brakeClockBase = brakeClock;
+            }
+
+            if (brakeCurve.Count == 40 && brakeTrigger)
+            {
+                brakeTrigger = false;
+                string result = string.Join(",", brakeCurve); //push result as string
+                propBrakeCurveValues = result;
+
+                double auc = 0;
+                for (int i = 0; i < 40; i++)
+                {
+                    auc = auc + (0.1 * brakeCurve[i]);
+                }
+                propBrakeCurveAUC = Math.Round(auc, 1);
+            }
+            if (brakeCurve.Count == 40 && brake == 0)
+            {
+                brakeCurve.Clear();
+                brakeClock = 0;
+                brakeClockBase = 0;
+                propBrakeMax = 0;
+            }
+        }
+
+        /// <summary>
+        /// Pit box location calculations
+        /// </summary>
+        private void PitBox()
+        {
+            propBoxApproach = false;
+
+            propPitBox = (pitLocation - trackPosition) * trackLength;
+            if (pitLocation < 0.2 && trackPosition > 0.8)
+            {
+                propPitBox = (pitLocation + (1 - trackPosition)) * trackLength;
+            }
+            else if (pitLocation > 0.8 && trackPosition < 0.2)
+            {
+                propPitBox = -((1 - pitLocation) + trackPosition) * trackLength;
+            }
+
+            awayFromPits = -propPitBox;
+
+            if (propPitBox > -8 && propPitBox < 33 && pit == 1 && pitStall != 1 && hasPitted == true) //Car is approaching the pit box, and can pass by 8 meters. 
+            {
+                propBoxApproach = true;
+                hasApproached = true;
+            }
+
+            if (Math.Abs(propPitBox) < 2 && pit == 1)   //Car is in the pit box
+            {
+                propPitBox = 1 - ((propPitBox + 2) / 4);
+                propValidStintLaps = 0;
+                propInvalidStintLaps = 0;
+                stintLapsCheck = true;
+                fuelTargetDeltaCumulative = 0;
+            }
+            else propPitBox = 0;
+
+            if (pitStall == 1) //Car has spawned or recieved pit stop
+            {
+                hasPitted = false;
+                propCurrentFrontWing = wingFront;
+                propCurrentRearWing = wingRear;
+                currentPWS = PWS;
+                propCurrentTape = tape;
+                propOffTrack = false;
+                offTrackTimer = globalClock;
+            }
+            if (pit == 0)
+            {
+                hasApproached = false;
+            }
+
+
+            bool pitEntry = false;
+
+            if (pitLimiter == 1 && pit == 0 && stintLength > 1000)
+            {
+                pitEntry = true;
+            }
+
+            bool pitSpeeding = false;
+
+            if (pit == 1 && (Math.Round(speed, 0) - 2.5) > pitSpeedLimit)
+            {
+                pitSpeeding = true;
+            }
+
+            propPitEntry = pitEntry;
+            propPitSpeeding = pitSpeeding;
+        }
+
+        /// <summary>
+        /// Hotlap live position
+        /// </summary>
+        private void Hotlap()
+        {
+            int position = 0;
+            for (int i = 0; i < opponents; i++)
+            {
+                if (estimatedLapTime.TotalSeconds > 0 && Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds > 0 && estimatedLapTime.TotalSeconds > Base.gameData.NewData.Opponents[i].BestLapTime.TotalSeconds && Base.gameData.NewData.Opponents[i].CarClass == myClass && !Base.gameData.NewData.Opponents[i].IsPlayer)
+                {
+                    position++;
+                }
+
+            }
+            if (opponents > 1 && !(session == "Race" && currentLap == 1))
+            {
+                position++;
+            }
+
+            if (estimatedLapTime.TotalSeconds == 0)
+            {
+                position = 0;
+            }
+
+            propHotLapLivePosition = position;
+        }
+
+        /// <summary>
+        /// TC toggle
+        /// </summary>
+        private void TCtoggle()
+        {
+            if (!hasTC || TCPushTimer > 0 || (TC == TCoffPosition && TCoffPosition != -1) || (hasTCtog && !TCswitch))
+            {
+                propTCtoggle = false;
+            }
+            else
+            {
+                propTCtoggle = true;
+            }
+        }
+
+        /// <summary>
+        /// ABS toggle
+        /// </summary>
+        private void ABStoggle()
+        {
+            if (hasABStog || ABSoffPosition > -1)
+            {
+                if ((!ABSswitch && hasABStog) || ABSoffPosition == ABS)
+                {
+                    propABStoggle = false;
+                }
+                else
+                {
+                    propABStoggle = true;
+                }
+            }
+            else
+            {
+                propABStoggle = false;
+            }
+        }
+
+        /// <summary>
+        /// RPM Tracker
+        /// </summary>
+        private void RPMTracker()
+        {
+            if (rpm > 300 && rpm > RPMtracker && !upshift && clutch == 0)
+            {
+                RPMtracker = rpm;
+            }
+
+            if (propRPMgear != gear && gear != "N")
+            {
+                propRPMlastGear = RPMtracker;
+                RPMgearShift = true;
+
+                switch (propRPMgear)
+                {
+                    case "1":
+                        propLastShiftPoint = propShiftPoint1;
+                        break;
+
+                    case "2":
+                        propLastShiftPoint = propShiftPoint2;
+                        break;
+
+                    case "3":
+                        propLastShiftPoint = propShiftPoint3;
+                        break;
+
+                    case "4":
+                        propLastShiftPoint = propShiftPoint4;
+                        break;
+
+                    case "5":
+                        propLastShiftPoint = propShiftPoint5;
+                        break;
+
+                    case "6":
+                        propLastShiftPoint = propShiftPoint6;
+                        break;
+
+                    case "7":
+                        propLastShiftPoint = propShiftPoint7;
+                        break;
+                }
+
+                propRPMgear = gear;
+                RPMtracker = 0;
+                upshift = false;
+                downshift = false;
+            }
+
+            if (brake == 0)
+            {
+                RPMgearShift = false;
+            }
+
+            if (RPMgearShift && brake > 0 || pit == 1) //slowing down
+            {
+                RPMtracker = 0;
+            }
+        }
+
+        /// <summary>
+        /// TC EMULATION
+        /// Materials on road: 2
+        /// </summary>
+        private void TCEmulation()
+        {
+            if (Base.Settings.WheelSlipLEDs || ((hasTCtog && TCswitch) || (hasTCtimer && TCPushTimer == 0)) && !(pitLimiter == 1 && speed > 0.9 * pitSpeedLimit) && TC != TCoffPosition)
+            {
+
+                if (TCrpm * 0.998 > rpm || TCdropCD > 0)  //Main filter
+                {
+                    TCdropCD++;
+                    if (TCdropCD > 3 && gear == TCgear)
+                    {
+                        TCdropCD = 0;
+                    }
+                }
+
+                int TCgearLimit = 25;
+
+                if (carId == "Porsche 911 GT3.R") //Rediculous wobbly RPM on gear shift on this car
+                {
+                    TCgearLimit = 40;
+                }
+
+                if (upshift || TCgearCD > 0 || downshift) //Stop registering TC after gear shift
+                {
+                    TCgearCD++;
+                }
+                if (TCgearCD > TCgearLimit)
+                {
+                    TCgearCD = 0;
+                    TCgear = gear;
+                    TCthrottle = throttle;
+                    TCrpm = rpm;
+                }
+
+
+                if (roadTextures.Contains(surface) && (Math.Abs(LRShockVel) > 0.13 || Math.Abs(RRShockVel) > 0.13))  //Filter on bumps
+                {
+                    tcBumpCounter = 1;
+                }
+                if (tcBumpCounter > 0)
+                {
+                    tcBump = true;
+                    tcBumpCounter++;
+                }
+                if (tcBumpCounter > 20)
+                {
+                    tcBumpCounter = 0;
+                    tcBump = false;
+                }
+
+                if ((TCthrottle == 0 && throttle > 0) || propTCreleaseCD > 0)  //Filter on heavy throttle application
+                {
+                    propTCreleaseCD++;
+                    if (propTCreleaseCD > 25)
+                    {
+                        propTCreleaseCD = 0;
+                    }
+                }
+
+
+                if (!tcBump && propTCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0) && TCrpm * 0.995 > rpm && rpm < 0.98 * propRevLim && speed < 200 && rpm > propIdleRPM * 1.3)
+                {
+                    TCon = true;
+                    TCthrottle = throttle;
+                    TCrpm = rpm;
+                    TCduration = 0;
+                }
+                else if (TCdropCD == 0)
+                {
+                    TCthrottle = throttle;
+                    TCrpm = rpm;
+                }
+                if (TCon)
+                {
+                    TCduration++;
+                }
+                if (TCduration > 20)
+                {
+                    TCon = false;
+                    TCduration = 0;
+                }
+
+                //Running wheel slip through the filter
+                if (!tcBump && propTCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (((TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0)) || (slipLF == 100 || slipRF == 100)))
+                {
+                    propSlipLF = slipLF;
+                    propSlipRF = slipRF;
+                    propSlipLR = slipLR;
+                    propSlipRR = slipRR;
+                }
+
+                if ((hasTCtog && TCswitch) || (hasTCtimer && TCPushTimer == 0)) //Push active TC, check again that calculations has been done because of TC, and not because of wheel slip calc
+                {
+                    propTCactive = TCon;
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// TC off toggle
+        /// </summary>
+        private void TCoff()
+        {
+            if (hasTCtimer)
+            {
+
+                if (!TCLimiter) //Idle state
+                {
+                    TCtimer = globalClock;
+                }
+
+                TCOffTimer = globalClock.TotalSeconds - TCtimer.TotalSeconds; //ticks/seconds, something = 0 in idle state
+
+                if (TCactive) //Activated, sets timer to 5, keeps tractionTimer updated as long as button is held, starts the 5 second count-up when released
+                {
+                    TCOffTimer = 5;
+                    TCtimer = globalClock;
+                    TCLimiter = true;
+                }
+
+                if (globalClock.TotalSeconds - TCtimer.TotalSeconds > 5) //Ends the 5 second count-up 
+                {
+                    TCLimiter = false;
+                }
+
+                TCPushTimer = 5 - TCOffTimer; //Refining the result
+                if (TCOffTimer > 5)
+                {
+                    TCPushTimer = 0;
+                }
+
+                if (TCOffTimer == 5)
+                {
+                    TCPushTimer = 5;
+                }
+                if (TCOffTimer == 0)
+                {
+                    TCPushTimer = 0;
+                }
+
+                propTCOffTimer = TimeSpan.FromSeconds(TCPushTimer);
+
+            }
+            else
+            {
+                propTCOffTimer = new TimeSpan(0);
+            }
+        }
+
+        /// <summary>
+        /// No Boost
+        /// </summary>
+        private void NoBoost()
+        {
+            if (hasNoBoost)
+            {
+                if (speed > 80)
+                {
+                    NBspeedLim = true;
+                }
+
+                if (NBpressed)
+                {
+                    NBactive = !NBactive;
+                    NBpressed = false;
+                }
+
+                if (NBactive)
+                {
+                    propNBvalue = true;
+                }
+
+                if (speed < 80 && NBspeedLim || boost || !NBactive || MGU > 0 || battery == 1)
+                {
+                    propNBvalue = false;
+                    NBspeedLim = false;
+                    NBactive = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Radio toggle/name
+        /// </summary>
+        private void Radio()
+        {
+            if (irData.Telemetry.RadioTransmitCarIdx != -1)
+            {
+                propRadioName = irData.SessionData.DriverInfo.Drivers[irData.Telemetry.RadioTransmitCarIdx].UserName;
+                propRadioIsSpectator = Convert.ToBoolean(irData.SessionData.DriverInfo.Drivers[irData.Telemetry.RadioTransmitCarIdx].IsSpectator);
+
+                if (propRadioName == aheadGlobal)
+                {
+                    propRadioPosition = propRealPosition - 1;
+                }
+                else if (propRadioName == behindGlobal)
+                {
+                    propRadioPosition = propRealPosition + 1;
+                }
+                else
+                {
+                    propRadioPosition = irData.Telemetry.CarIdxClassPosition[irData.Telemetry.RadioTransmitCarIdx];
+                }
+            }
+            else
+            {
+                propRadioName = "";
+                propRadioIsSpectator = false;
+            }
+
+            propRadioName = propRadioName.ToUpper();
+
+            if (irData.Telemetry.RadioTransmitCarIdx != -1)
+            {
+                propRadio = false;
+            }
+        }
+
+        /// <summary>
+        /// Full screen actions
+        /// </summary>
+        private void FullScreen(ref bool pressed, ref bool enable, ref bool released)
+        {
+            if (pressed)
+            {
+                enable = !enable;
+                pressed = false;
+            }
+
+            if (released)
+            {
+                enable = false;
+                pressed = false;
+                released = false;
+            }
+        }
+
+        private void PitCommands()
+        {
+            //Pit commands
+            if (!Base.Settings.CoupleInCarToPit) // Ignore all of this if we explicitly state that coupling the InCar to Pit is off in settings)
+            {
+                pitMenuRequirementMet = true;
+            }
+            else if (
+                inCarRotary == 0 && pitMenuRotary != 0 ||
+                propRotaryType == "Single" ||
+                (propRotaryType != "Single" && propRotaryType != "Default" && inCarRotary == 12))
+            {
+                pitMenuRequirementMet = true;
+            }
+            else
+            {
+                pitMenuRequirementMet = false;
+            }
+
+            bool aheadPlayerReady = false;
+            bool behindPlayerReady = false;
+
+            if (Base.gameData.NewData.OpponentsAheadOnTrack.Count > 0)
+            {
+                aheadPlayerReady = true;
+            }
+            if (Base.gameData.NewData.OpponentsBehindOnTrack.Count > 0)
+            {
+                behindPlayerReady = true;
+            }
+
+            if (propRotaryType == "Single" && pitMenuRotary == 0)
+            {
+                pitMenuRotary = inCarRotary;
+            }
+
+            if (plusButtonCheck)
+            {
+                if (pitMenuRotary == 1 && pitMenuRequirementMet)
+                {
+                    string pushPit = "";
+
+                    if (commandMaxFuel == 0)
+                    {
+                        pushPit = "#clear ws$";
+                    }
+                    else
+                    {
+                        pushPit = "#clear fuel " + Convert.ToString(commandMaxFuel) + "l ws$";
+                    }
+
+                    iRacing.PitCommands.iRacingChat(pushPit);
+                }
+                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
+                {
+                    propLaunchActive = !propLaunchActive;
+                }
+                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#lf +3kpa rf +3kpa lr +3kpa rr +3kpa$");
+                }
+                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
+                    {
+                        iRacing.PitCommands.iRacingChat("#lf +3kpa rf +3kpa$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#lf +3kpa lr +3kpa$");
+                    }
+                }
+                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
+                    {
+                        iRacing.PitCommands.iRacingChat("#lr +3kpa rr +3kpa$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#rf +3kpa rr +3kpa$");
+                    }
+                }
+                else if (pitMenuRotary == 6 && pitMenuRequirementMet && aheadPlayerReady)
+                {
+                    iRacing.PitCommands.iRacingChat("/" + Base.gameData.NewData.OpponentsAheadOnTrack[0].CarNumber + " " + Base.Settings.AheadPlayerText);
+                }
+                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#fuel +" + Base.Settings.SmallFuelIncrement + "l$");
+                }
+                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#fuel +" + Base.Settings.LargeFuelIncrement + "l$");
+                }
+                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
+                {
+                    watchSplit = true;
+                }
+
+                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
+                {
+                    Base.Settings.ShowMapEnabled = !Base.Settings.ShowMapEnabled;
+                }
+
+                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
+                {
+                    savePitTimerLock = true;
+                    savePitTimerSnap = slowestLapTimeSpanCopy;
+                }
+
+                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
+                {
+                    //pluginManager.TriggerAction("ShakeITBSV3Plugin.MainFeedbackLevelIncrement");
+                    propFuelPerLapOffset = propFuelPerLapOffset + Base.Settings.fuelOffsetIncrement;
+                }
+
+
+                plusButtonCheck = false;
+            }
+
+            if (minusButtonCheck)
+            {
+                if (pitMenuRotary == 1 && pitMenuRequirementMet)
+                {
+                    string pushPit = "";
+                    if (commandMinFuel == 0)
+                    {
+                        pushPit = "#clear ws$";
+                    }
+                    else
+                    {
+                        pushPit = "#clear fuel " + Convert.ToString(commandMinFuel) + "l ws$";
+                    }
+                    iRacing.PitCommands.iRacingChat(pushPit);
+                }
+                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
+                {
+                    propPaceCheck = !propPaceCheck;
+                }
+                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#lf -3kpa rf -3kpa lr -3kpa rr -3kpa$");
+                }
+                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
+                    {
+                        iRacing.PitCommands.iRacingChat("#rf -3kpa lf -3kpa$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#lf -3kpa lr -3kpa$");
+                    }
+                }
+                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight || pitCrewType == CrewType.All)
+                    {
+                        iRacing.PitCommands.iRacingChat("#lr -3kpa rr -3kpa$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#rf -3kpa rr -3kpa$");
+                    }
+                }
+                else if (pitMenuRotary == 6 && pitMenuRequirementMet && behindPlayerReady)
+                {
+                    string driverText = "/#" + Base.gameData.NewData.OpponentsBehindOnTrack[0].CarNumber + " " + Base.Settings.BehindPlayerText;
+                    iRacing.PitCommands.iRacingChat(driverText);
+                }
+                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#fuel -" + Base.Settings.SmallFuelIncrement + "l$");
+                }
+                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#fuel -" + Base.Settings.LargeFuelIncrement + "l$");
+                }
+
+                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
+                {
+                    watchTimer = globalClock;
+                    watchSnap = 0;
+                    watchReset = true;
+                    watchResult = 0;
+                    watchSplit = false;
+                }
+
+                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
+                {
+                    propPitScreenEnable = !propPitScreenEnable;
+
+                }
+
+                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
+                {
+                    savePitTimerLock = false;
+                }
+
+                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
+                {
+                    //pluginManager.TriggerAction("ShakeITBSV3Plugin.MainFeedbackLevelDecrement");
+                    if ((fuelAvgLap + propFuelPerLapOffset - Base.Settings.fuelOffsetIncrement) > 0)
+                    {
+                        propFuelPerLapOffset = propFuelPerLapOffset - Base.Settings.fuelOffsetIncrement;
+                    }
+                    else
+                    {
+                        propFuelPerLapOffset = -fuelAvgLap;
+                    }
+                }
+
+                minusButtonCheck = false;
+            }
+
+            if (OKButtonCheck)
+            {
+                if (pitMenuRotary == 1 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#clear$");
+                    propFuelPerLapOffset = 0;
+                }
+                else if (pitMenuRotary == 2 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#!fr$");
+                }
+                else if (pitMenuRotary == 3 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#!cleartires$");
+                }
+                else if (pitMenuRotary == 4 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#!lf !rf$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#!lf !lr$");
+                    }
+                    else
+                    {
+                        iRacing.PitCommands.iRacingChat("#!cleartires$");
+                    }
+                }
+                else if (pitMenuRotary == 5 && pitMenuRequirementMet)
+                {
+                    if (pitCrewType < CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#!lr !rr$");
+                    }
+                    else if (pitCrewType == CrewType.LeftRight)
+                    {
+                        iRacing.PitCommands.iRacingChat("#!rf !rr$");
+                    }
+                    else
+                    {
+                        iRacing.PitCommands.iRacingChat("#!cleartires$");
+                    }
+                }
+                else if (pitMenuRotary == 6 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#!ws$");
+                }
+                else if (pitMenuRotary == 7 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#!fuel$");
+                }
+                else if (pitMenuRotary == 8 && pitMenuRequirementMet)
+                {
+                    iRacing.PitCommands.iRacingChat("#!fuel$");
+                }
+                else if (pitMenuRotary == 9 && pitMenuRequirementMet)
+                {
+                    watchOn = !watchOn;
+                }
+                else if (pitMenuRotary == 10 && pitMenuRequirementMet)
+                {
+                    propSpotMode = !propSpotMode;
+                }
+                else if (pitMenuRotary == 11 && pitMenuRequirementMet)
+                {
+                    Base.Dashboard.DeltaScreen.Next();
+                }
+                else if (pitMenuRotary == 12 && pitMenuRequirementMet)
+                {
+                    Base.Settings.fuelPerLapTarget = fuelAvgLap + propFuelPerLapOffset;
+                }
+
+                OKButtonCheck = false;
+            }
+        }
+
+        /// <summary>
+        /// OvertakeMode
+        /// </summary>
+        private void OvertakeMode()
+        {
+            propOvertakeMode = false;
+
+            if (throttle == 100 && rpm > 300 && speed > 10)
+            {
+                propOvertakeMode = true;
+            }
+        }
+
+        /// <summary>
+        /// Wheel slip
+        /// </summary>
+        private void WheelSlip()
+        {
+            if (!Base.Settings.WheelSlipLEDs || slipLF < 25 || slipRF < 25)
+            {
+                slipLF = 0;
+                slipLR = 0;
+                slipRF = 0;
+                slipRR = 0;
+            }
+
+            if (slipLF < 40 && slipLF > slipRF)
+            {
+                slipRF = 0;
+                slipRR = 0;
+            }
+            else if (slipRF < 40 && slipRF > slipLF)
+            {
+                slipLF = 0;
+                slipLR = 0;
+            }
+
+            if (slipLF == 0 && slipLR == 0)
+            {
+                propSlipLF = 0;
+                propSlipRF = 0;
+                propSlipLR = 0;
+                propSlipRR = 0;
+            }
+        }
+
+        /// <summary>
+        /// TRIGGERED STOPWATCH
+        /// </summary>
+        private void StopWatch()
+        {
+            // -- Idle clock
+            if (!watchOn && watchReset)
+            {
+                watchTimer = globalClock;
+                watchResult = 0;
+            }
+
+            // -- Clock is started
+            if (watchOn)
+            {
+                watchReset = false;
+                watchResult = globalClock.TotalSeconds - watchTimer.TotalSeconds + watchSnap;
+                watchStopper = true;
+            }
+
+            //Split is captured
+            if (watchOn && watchSplit)
+            {
+                if (watchSplitTime.TotalSeconds == 0)
+                {
+                    watchSplitTime = TimeSpan.FromSeconds(watchResult);
+                }
+                else
+                {
+                    watchSplitTime = TimeSpan.FromSeconds(0);
+                }
+                watchSplit = false;
+            }
+
+            // --Clock is stopped, begin clocking the waiting time
+            if (!watchOn && !watchReset)
+            {
+                watchTimer = globalClock;
+                if (watchStopper)
+                {
+                    watchSnap = watchResult;
+                    watchStopper = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// ACCELERATION STOPWATCH
+        /// </summary>
+        private void Acceleration()
+        {
+            if (gear != "N" && speed < 0.5 && rpm > 300)
+            {
+                accelerationStart = true;
+            }
+            else if (accelerationPremature == 1)
+            {
+                propAccelerationTo200KPH = 0;
+            }
+            else if (accelerationPremature == 2)
+            {
+                propAccelerationTo100KPH = 0;
+                propAccelerationTo200KPH = 0;
+            }
+
+            if (!accelerationStart && speed > 0.5)
+            {
+                if (!oneHundered && !twoHundered)
+                {
+                    accelerationPremature = 2;
+                }
+                else if (!twoHundered)
+                {
+                    accelerationPremature = 1;
+                }
+            }
+
+            if (accelerationStart)
+            {
+                stopWatch = globalClock;
+                oneHundered = false;
+                twoHundered = false;
+                propAccelerationTo100KPH = 0;
+                propAccelerationTo200KPH = 0;
+                accelerationStart = false;
+            }
+
+            if (!accelerationStart && speed > 0.5)
+            {
+                if (!oneHundered)
+                {
+                    propAccelerationTo100KPH = globalClock.TotalSeconds - stopWatch.TotalSeconds;
+                }
+                if (!twoHundered)
+                {
+                    propAccelerationTo200KPH = globalClock.TotalSeconds - stopWatch.TotalSeconds;
+                }
+
+            }
+
+            if (speed > 100 && !oneHundered)
+            {
+                oneHundered = true;
+                accelerationPremature = 1;
+            }
+
+            if (speed > 200 && !twoHundered)
+            {
+                twoHundered = true;
+                accelerationPremature = 0;
+            }
+        }
+
+        /// <summary>
+        /// F3.5 DRS COUNT
+        /// </summary>
+        private void DRSCount()
+        {
+            DRSleft = 8 - myDRSCount;
+
+            if (DRSleft < 0 || session != "Race")
+            {
+                DRSleft = 0;
+            }
+
+            //Special considerations
+
+            //Indycar P2P
+
+            if (carId == "Dallara IR18")
+            {
+                if (propP2pActive)
+                {
+                    propRevLim = 12300;
+                    propShiftPoint1 = 12250;
+                    propShiftPoint2 = 12270;
+                    propShiftPoint3 = 12280;
+                    propShiftPoint4 = 12280;
+                    propShiftPoint5 = 12280;
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// MCLAREN MP4-30 ERS TARGET
+        /// </summary>
+        private void ERSTarget()
+        {
+            if (carId == "Mclaren MP4-30" || carId == "Mercedes W12")
+            {
+                irData.Telemetry.TryGetValue("dcMGUKDeployMode", out object rawERSMode);
+                int ERSselectedMode = Convert.ToInt32(rawERSMode);
+                int W12ERS = ERSselectedMode;
+                int ERSstartMode = 0;
+                if (Base.GetProp("GameRawData.SessionData.CarSetup.DriveBrake.PowerUnitConfig.TargetBatterySoc") != null)
+                {
+                    ERSstartMode = Convert.ToInt32(Convert.ToString(Base.GetProp("GameRawData.SessionData.CarSetup.DriveBrake.PowerUnitConfig.TargetBatterySoc")).Substring(0, 2));
+                }
+
+                if (W12ERS != W12ERSRef)
+                {
+                    if (speed > ERSlimit)
+                    {
+                        ERSChangeCount--;
+                    }
+                    W12ERSRef = W12ERS;
+                    if (ERSChangeCount < 0)
+                    {
+                        ERSChangeCount = 0;
+                    }
+                }
+
+                if (ERSstartingLap)
+                {
+                    ERSreturnMode = ERSstartMode;
+                }
+
+                if (currentLap != ERSlapCounter)
+                {
+                    ERSlapCounter = currentLap;
+                    ERSreturnMode = ERSselectedMode;
+                    ERSstartingLap = false;
+                }
+
+                propERSCharges = ERSChangeCount;
+                propERSTarget = ERSreturnMode;
+            }
+            else
+            {
+                propERSCharges = 0;
+                propERSTarget = 0;
+            }
+        }
+
+        /// <summary>
+        /// SHIFT LIGHT/SHIFT POINT PER GEAR
+        /// </summary>
+        private void ShiftLight()
+        {
+            switch (gear)
+            {
+                case "1":
+                    propCurrentShiftPoint = propShiftPoint1;
+                    shiftPointAdjustment = 4;
+                    break;
+
+                case "2":
+                    propCurrentShiftPoint = propShiftPoint2;
+                    shiftPointAdjustment = 2;
+                    break;
+
+                case "3":
+                    propCurrentShiftPoint = propShiftPoint3;
+                    shiftPointAdjustment = 1.5;
+                    break;
+
+                case "4":
+                    propCurrentShiftPoint = propShiftPoint4;
+                    shiftPointAdjustment = 1;
+                    break;
+
+                case "5":
+                    propCurrentShiftPoint = propShiftPoint5;
+                    shiftPointAdjustment = 0.8;
+                    break;
+
+                case "6":
+                    propCurrentShiftPoint = propShiftPoint6;
+                    shiftPointAdjustment = 0.7;
+                    break;
+
+                case "7":
+                    propCurrentShiftPoint = propShiftPoint7;
+                    shiftPointAdjustment = 0.4;
+                    break;
+                case "8":
+                    propCurrentShiftPoint = Convert.ToInt32(propRevLim);
+                    shiftPointAdjustment = 0;
+                    break;
+            }
+            double amplifier = 1;
+
+            if (gear == "N" && propSmoothGear == "N")
+            {
+                propCurrentShiftPoint = propShiftPoint1;
+                shiftPointAdjustment = 0;
+            }
+
+            if (boost || MGU > 200000)
+            {
+                amplifier = amplifier + 0.3;
+            }
+
+            if (propHasDRS && propDRSpush == "Open")
+            {
+                amplifier = amplifier + 0.15;
+            }
+
+            double revSpeedCopy = revSpeed * amplifier;
+
+            propShiftLightRPM = propCurrentShiftPoint - (Base.Settings.ReactionTime * shiftPointAdjustment * revSpeedCopy);
+            double throttleFraction = throttle - 30;
+            if (throttleFraction < 0)
+            {
+                throttleFraction = 0;
+            }
+            propShiftLightRPM = propShiftLightRPM + ((propCurrentShiftPoint - propShiftLightRPM) * (1 - throttleFraction / 70));
+            if (propCurrentShiftPoint == 0)
+            {
+                propShiftLightRPM = propRevLim;
+            }
+
+
+            if (rpm < propShiftLightRPM)
+            {
+                reactionTime = globalClock;
+                reactionGear = gear;
+            }
+
+            if (gear != reactionGear && gear == "N")
+            {
+                propReactionPush = globalClock.TotalMilliseconds - reactionTime.TotalMilliseconds - 40;
+                reactionGear = gear;
+            }
+        }
+
+        /// <summary>
+        /// DRS
+        /// </summary>
+        private void DRS()
+        {
+            propDRSpush = "";
+            switch (DRSState)
+            {
+                case 0:
+                    propDRSpush = "None";
+                    break;
+                case 1:
+                    propDRSpush = "Acquired";
+                    if (carId == "Formula Renault 3.5")
+                    {
+                        propDRSpush = "None";
+                    }
+                    break;
+                case 2:
+                    propDRSpush = "Ready";
+                    if (carId == "Formula Renault 3.5")
+                    {
+                        propDRSpush = "Open";
+                    }
+                    break;
+                case 3:
+                    propDRSpush = "Open";
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// TRACK ATTRIBUTES UPDATE
+        /// </summary>
+        private void TrackAttributes()
+        {
+            //Resetting values to default
+            propTrackType = 0;
+            hasExempt = false;
+            exemptOne = 0;
+            exemptOneMargin = 0;
+            exemptTwo = 0;
+            exemptTwoMargin = 0;
+            hasCutOff = false;
+            cutoffValue = 0;
+            pitStopBase = 25;
+            pitStopMaxSpeed = 0;
+            pitStopCornerSpeed = 0;
+            pitStopBrakeDistance = 0;
+            pitStopAcceleration = 0;
+            trackHasAnimatedCrew = false;
+            pitFastSide = "Right";
+
+            //Extracting info from track list
+
+            Tracks _trackInfo = trackInfo.FirstOrDefault(x => x.Id == track);
+            if (_trackInfo != null)
+            {
+                propTrackType = _trackInfo.TrackType;
+                hasExempt = _trackInfo.HasExempt;
+                exemptOne = _trackInfo.ExemptOne;
+                exemptOneMargin = _trackInfo.ExemptOneMargin;
+                exemptTwo = _trackInfo.ExemptTwo;
+                exemptTwoMargin = _trackInfo.ExemptTwoMargin;
+                hasCutOff = _trackInfo.HasCutOff;
+                cutoffValue = _trackInfo.CutOff;
+                pitStopBase = _trackInfo.PitStopBase;
+                pitStopMaxSpeed = _trackInfo.PitStopMaxSpeed;
+                pitStopCornerSpeed = _trackInfo.PitStopCornerSpeed;
+                pitStopBrakeDistance = _trackInfo.PitStopBrakeDistance;
+                pitStopAcceleration = _trackInfo.PitStopAcceleration;
+                trackHasAnimatedCrew = _trackInfo.HasAnimatedCrew;
+                pitFastSide = _trackInfo.PitFastSide;
+            }
+
+
+            if (hasCutOff)
+            {
+                cutoff = cutoffValue;
+            }
+            else
+            {
+                cutoff = 0.02;
+            }
+
+            if (propTrackType == 0)
+            {
+                if (trackConfig == "short oval")
+                {
+                    propTrackType = 6;
+                }
+                else if (trackConfig == "medium oval")
+                {
+                    propTrackType = 7;
+                }
+                else if (trackConfig == "super speedway")
+                {
+                    propTrackType = 8;
+                }
+                else if (trackConfig == "dirt oval")
+                {
+                    propTrackType = 5;
+                }
+                else if (trackConfig == "dirt road course")
+                {
+                    propTrackType = 4;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Off track registration
+        /// </summary>
+        private void OffTrack()
+        {
+            if ((session == "Race" || session == "Practice" || session == "Open Qualify") && sessionState > 3)
+            {
+                if ((trackLocation != 0 && !(pit != 1 && speed < 10) && !(awayFromPits > 2 && stintLength < 400 && stintLength > 20)) || ((currentLap == 1 || currentLap == 0) && stintLength < 400 && session == "Race"))
+                {
+                    offTrackTimer = globalClock;
+                }
+                if (globalClock.TotalSeconds - offTrackTimer.TotalSeconds > 1 && speed < 150)
+                {
+                    propOffTrack = true;
+                }
+                if (propOffTrack && globalClock.TotalSeconds - offTrackTimer.TotalSeconds < 1 && speed > 50)
+                {
+                    propOffTrack = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// SoF AND IR LOSS/GAIN
+        /// </summary>
+        private void SofAndIrating()
+        {
+            List<double?> iratings = new List<double?> { };
+            double weight = 1600 / Math.Log(2);
+            double posCorr = (classOpponents / 2 - propRealPosition) / 100;
+
+            for (int i = 0; i < opponents; i++)
+            {
+                if (Base.gameData.NewData.Opponents[i].CarClass == myClass)
+                {
+                    iratings.Add(Base.gameData.NewData.Opponents[i].IRacing_IRating);
+                }
+                else
+                {
+                    iratings.Add(0);
+                }
+            }
+
+            List<double> filtered = new List<double> { };
+            double valueHolder = 0;
+
+            for (int a = 0; a < iratings.Count; a++)
+            {
+                valueHolder = Convert.ToDouble(iratings[a]);
+                if (valueHolder != 0)
+                {
+                    filtered.Add(valueHolder);
+                }
+            }
+
+            double sum = 0;
+            double IRscore = 0;
+
+            if (filtered.Count >= classOpponents)
+            {
+                for (int e = 0; e < classOpponents; e++)
+                {
+                    sum += Math.Pow(2, -filtered[e] / 1600);
+                    IRscore += (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight) / ((1 - Math.Exp(-filtered[e] / weight)) * Math.Exp(-myIR / weight) + (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight));
+                }
+            }
+
+            if (IRscore != 0)
+            {
+                IRscore = IRscore - 0.5;
+            }
+
+            propSoF = 0;
+
+            if (sum != 0)
+            {
+                propSoF = Math.Round(weight * Math.Log(classOpponents / sum));
+                if (session == "Race" && !propRaceFinished && sessionState > 3)
+                {
+                    propIRchange = Math.Round((classOpponents - propRealPosition - IRscore - posCorr) * 200 / classOpponents);
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Smooth Gear
+        /// </summary>
+        private void SmoothGear()
+        {
+            if (gear != "N")
+            {
+                propSmoothGear = gear;
+                neutralCounter = 0;
+            }
+
+            if (gear == "N")
+            {
+                neutralCounter++;
+            }
+
+            if (neutralCounter > 6)
+            {
+                propSmoothGear = "N";
+                neutralCounter = 0;
+            }
+            if (Base.DDC.button8Mode == 1)
+            {
+                propSmoothGear = "N";
+            }
+        }
+
+        /// <summary>
+        /// Calculate sector deltas
+        /// </summary>
+        private void SectorDelta(int sectorNumber, double bestSector, List<double> timeList)
+        {
+            if (bestSector > 0)
+            {
+                for (int i = 0; i < timeList.Count; i++)
+                {
+                    if (timeList[i] > 0)
+                    {
+                        //Base.SetProp("Lap0" + (i + 1) + "Sector"+sectorNumber.ToString()+"Delta", Math.Round(delta, 3));
+                        propLapSectorDelta[i, sectorNumber] = Math.Round(timeList[i] - bestSector, 3);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add rotary action and bindings for Pit Menu
+        /// </summary>
+        private void AddRotaryPitMenu(int position)
+        {
+            Base.AddAction($"L{position:0}", (a, b) =>
+            {
+                pitMenuRotary = position;
+                Base.SetProp("PitMenu", pitMenuRotary);
+                if (Base.Settings.DDSEnabled)
+                {
+                    inCarRotary = 0;
+                    Base.SetProp("InCarMenu", inCarRotary);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Add rotary action and bindings for inCar Menu
+        /// </summary>
+        private void AddRotaryInCar(int position)
+        {
+            Base.AddAction($"R{position:0}", (a, b) =>
+           {
+               inCarRotary = position;
+               Base.SetProp("InCarMenu", inCarRotary);
+               if (Base.Settings.DDSEnabled)
+               {
+                   if (propRotaryType == "Single")
+                   {
+                       pitMenuRotary = inCarRotary;
+                       Base.SetProp("PitMenu", inCarRotary);
+                   }
+                   else
+                   {
+                       Base.SetProp("PitMenu", 0);
+                   }
+               }
+           });
         }
     }
 }
