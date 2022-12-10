@@ -8,7 +8,6 @@ namespace DahlDesign.Plugin.Categories
     /// </summary>
     public class Stopwatch : SectionBase
     {
-
         public Stopwatch(DahlDesign dahlDesign) : base(dahlDesign) { }
 
         //class variables
@@ -85,6 +84,7 @@ namespace DahlDesign.Plugin.Categories
             watchResult = 0;
             watchSplit = false;
         }
+
         public void ToggleWatch()
         {
             watchOn = !watchOn;
@@ -94,6 +94,5 @@ namespace DahlDesign.Plugin.Categories
         {
             watchSplit = true;
         }
-
     }
 }
