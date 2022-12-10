@@ -418,15 +418,6 @@ namespace DahlDesign.Plugin.iRacing
         bool throttleTrigger = false;
         bool throttleTriggerCheck = false;
 
-        bool watchOn = false;
-        bool watchReset = false;
-        bool watchStopper = false;
-        bool watchSplit = false;
-        TimeSpan watchSplitTime = new TimeSpan(0);
-        TimeSpan watchTimer = new TimeSpan(0);
-        double watchResult = 0;
-        double watchSnap = 0;
-
         double RPMtracker = 0;
         bool RPMgearShift = false;
         double RPMlastGear = 0;
@@ -1895,55 +1886,6 @@ namespace DahlDesign.Plugin.iRacing
                 jokerThisLap = true;
             }
 
-          
-
-            //----------------------------------
-            //-------TRIGGERED STOPWATCH--------
-            //----------------------------------
-
-            // -- Idle clock
-            if (!watchOn && watchReset)
-            {
-                watchTimer = Globals.globalClock;
-                watchResult = 0;
-            }
-
-            // -- Clock is started
-            if (watchOn)
-            {
-                watchReset = false;
-                watchResult = Globals.globalClock.TotalSeconds - watchTimer.TotalSeconds + watchSnap;
-                watchStopper = true;
-            }
-
-            //Split is captured
-            if (watchOn && watchSplit)
-            {
-                if (watchSplitTime.TotalSeconds == 0)
-                {
-                    watchSplitTime = TimeSpan.FromSeconds(watchResult);
-                }
-                else
-                {
-                    watchSplitTime = TimeSpan.FromSeconds(0);
-                }
-                watchSplit = false;
-            }
-
-            // --Clock is stopped, begin clocking the waiting time
-            if (!watchOn && !watchReset)
-            {
-                watchTimer = Globals.globalClock;
-                if (watchStopper)
-                {
-                    watchSnap = watchResult;
-                    watchStopper = false;
-                }
-            }
-
-            Base.SetProp("StopWatchSplit", watchSplitTime);
-            Base.SetProp("StopWatch", TimeSpan.FromSeconds(watchResult));
-
             //----------------------------------
             //----------MISC--------------------
             //----------------------------------
@@ -2103,7 +2045,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
                 else if (Base.Rotary.PitMenu(9))
                 {
-                    watchSplit = true;
+                    Base.Stopwatch.SetSplit();
                 }
 
                 else if (Base.Rotary.PitMenu(10))
@@ -2188,17 +2130,12 @@ namespace DahlDesign.Plugin.iRacing
 
                 else if (Base.Rotary.PitMenu(9))
                 {
-                    watchTimer = Globals.globalClock;
-                    watchSnap = 0;
-                    watchReset = true;
-                    watchResult = 0;
-                    watchSplit = false;
+                    Base.Stopwatch.Reset();
                 }
 
                 else if (Base.Rotary.PitMenu(10))
                 {
                     pitScreenEnable = !pitScreenEnable;
-
                 }
 
                 else if (Base.Rotary.PitMenu(11))
@@ -2284,7 +2221,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
                 else if (Base.Rotary.PitMenu(9))
                 {
-                    watchOn = !watchOn;
+                    Base.Stopwatch.ToggleWatch();
                 }
                 else if (Base.Rotary.PitMenu(10))
                 {
@@ -6058,7 +5995,6 @@ namespace DahlDesign.Plugin.iRacing
             {
                 optimalLapTime = new TimeSpan(0);
             }
-
         }
     }
 }

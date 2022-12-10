@@ -26,6 +26,7 @@ namespace DahlDesign.Plugin
         public Radio Radio;
         public SofandIRating SofandIRating;
         public OffTrack OffTrack;
+        public Stopwatch Stopwatch;
         public int counter = 0;
         public ImageSource PictureIcon => this.ToIcon(Properties.Resources.Dahl_icon);
         public string LeftMenuTitle => "Dahl Design";
@@ -53,6 +54,7 @@ namespace DahlDesign.Plugin
             Radio = new Radio(this);
             SofandIRating  = new SofandIRating(this);
             OffTrack  = new OffTrack(this);
+            Stopwatch  = new Stopwatch(this);
             
 
             InitSections();
@@ -78,6 +80,7 @@ namespace DahlDesign.Plugin
             Sections.Add(Radio);
             Sections.Add(SofandIRating);
             Sections.Add(OffTrack);
+            Sections.Add(Stopwatch);
 
             sectionsAreDirty = false;
         }

@@ -4,7 +4,7 @@ using SimHub.Plugins;
 namespace DahlDesign.Plugin.Categories
 {
     /// <summary>
-    /// TOFF TRACK REGISTRATION
+    /// OFF TRACK REGISTRATION
     /// </summary>
     public class OffTrack : SectionBase
     {
