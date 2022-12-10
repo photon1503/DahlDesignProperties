@@ -175,7 +175,6 @@ namespace DahlDesign.Plugin.iRacing
         List<int> sessionCarsLapsSincePit = new List<int> { };
 
         double pitBox = 0;
-        double awayFromPits = 0;
         bool hasPitted = false;
         bool hasApproached = false;
 
@@ -390,8 +389,8 @@ namespace DahlDesign.Plugin.iRacing
         string reactionGear = "";
         double reactionPush = 0;
 
-        TimeSpan offTrackTimer = new TimeSpan(0);
-        bool offTrack = false;
+       
+        
 
         double TCrpm = 0;
         double TCthrottle = 0;
@@ -519,8 +518,7 @@ namespace DahlDesign.Plugin.iRacing
             
 
             Base.AttachDelegate("Idle", () => iRIdle);
-            
-            Base.AttachDelegate("TrackEntry", () => offTrack);
+        
             Base.AttachDelegate("LastGearMaxRPM", () => RPMlastGear);
             Base.AttachDelegate("LastGear", () => RPMgear);
             Base.AttachDelegate("OvertakeMode", () => overtakeMode);
@@ -1123,7 +1121,6 @@ namespace DahlDesign.Plugin.iRacing
             ERSstartingLap = true;
             TCon = false;
             TCduration = 0;
-            offTrack = false;
 
 
             //Props that need refresh
@@ -1204,7 +1201,7 @@ namespace DahlDesign.Plugin.iRacing
                 return;
 
             //Updating relevant data
-            TimeSpan globalClock = TimeSpan.FromTicks(DateTime.Now.Ticks);
+            Globals.globalClock = TimeSpan.FromTicks(DateTime.Now.Ticks);
 
             IRData.Telemetry.TryGetValue("PlayerCarTeamIncidentCount", out object rawIncidents);
             int incidents = Convert.ToInt32(rawIncidents);                                          //Incidents
@@ -1295,7 +1292,7 @@ namespace DahlDesign.Plugin.iRacing
             Globals.sessionState = Convert.ToInt32(rawSessionState);                                    //Session State
 
             IRData.Telemetry.TryGetValue("PlayerTrackSurface", out object rawtrackLocation);
-            int trackLocation = Convert.ToInt32(rawtrackLocation);                                  //TrkLoc
+            Globals.trackLocation = Convert.ToInt32(rawtrackLocation);                                  //TrkLoc
 
             IRData.Telemetry.TryGetValue("dpWingFront", out object rawWingFront);                   //Front wing setting
             double wingFront = Math.Round(Convert.ToDouble(rawWingFront), 2);
@@ -1382,28 +1379,6 @@ namespace DahlDesign.Plugin.iRacing
             fuelTog = Convert.ToBoolean(pitInfo & 16);
             WSTog = Convert.ToBoolean(pitInfo & 32);
             repairTog = Convert.ToBoolean(pitInfo & 64);
-
-
-
-            //----------------------------------------------
-            //--------OFF TRACK REGISTRATION----------------
-            //----------------------------------------------
-            if ((session == "Race" || session == "Practice" || session == "Open Qualify") && Globals.sessionState > 3)
-            {
-                if ((trackLocation != 0 && !(pit != 1 && speed < 10) && !(awayFromPits > 2 && stintLength < 400 && stintLength > 20)) || ((currentLap == 1 || currentLap == 0) && stintLength < 400 && session == "Race"))
-                {
-                    offTrackTimer = globalClock;
-                }
-                if (globalClock.TotalSeconds - offTrackTimer.TotalSeconds > 1 && speed < 150)
-                {
-                    offTrack = true;
-                }
-                if (offTrack && globalClock.TotalSeconds - offTrackTimer.TotalSeconds < 1 && speed > 50)
-                {
-                    offTrack = false;
-                }
-            }
-
 
             //-----------------------------------------------
             //--------TRACK ATTRIBUTES UPDATE----------------
@@ -1849,13 +1824,13 @@ namespace DahlDesign.Plugin.iRacing
 
             if (rpm < shiftLightRPM)
             {
-                reactionTime = globalClock;
+                reactionTime = Globals.globalClock;
                 reactionGear = gear;
             }
 
             if (gear != reactionGear && gear == "N")
             {
-                reactionPush = globalClock.TotalMilliseconds - reactionTime.TotalMilliseconds - 40;
+                reactionPush = Globals.globalClock.TotalMilliseconds - reactionTime.TotalMilliseconds - 40;
                 reactionGear = gear;
             }
 
@@ -1929,7 +1904,7 @@ namespace DahlDesign.Plugin.iRacing
             // -- Idle clock
             if (!watchOn && watchReset)
             {
-                watchTimer = globalClock;
+                watchTimer = Globals.globalClock;
                 watchResult = 0;
             }
 
@@ -1937,7 +1912,7 @@ namespace DahlDesign.Plugin.iRacing
             if (watchOn)
             {
                 watchReset = false;
-                watchResult = globalClock.TotalSeconds - watchTimer.TotalSeconds + watchSnap;
+                watchResult = Globals.globalClock.TotalSeconds - watchTimer.TotalSeconds + watchSnap;
                 watchStopper = true;
             }
 
@@ -1958,7 +1933,7 @@ namespace DahlDesign.Plugin.iRacing
             // --Clock is stopped, begin clocking the waiting time
             if (!watchOn && !watchReset)
             {
-                watchTimer = globalClock;
+                watchTimer = Globals.globalClock;
                 if (watchStopper)
                 {
                     watchSnap = watchResult;
@@ -2213,7 +2188,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 else if (Base.Rotary.PitMenu(9))
                 {
-                    watchTimer = globalClock;
+                    watchTimer = Globals.globalClock;
                     watchSnap = 0;
                     watchReset = true;
                     watchResult = 0;
@@ -2422,19 +2397,19 @@ namespace DahlDesign.Plugin.iRacing
 
                 if (!TCLimiter) //Idle state
                 {
-                    TCtimer = globalClock;
+                    TCtimer = Globals.globalClock;
                 }
 
-                TCOffTimer = globalClock.TotalSeconds - TCtimer.TotalSeconds; //ticks/seconds, something = 0 in idle state
+                TCOffTimer = Globals.globalClock.TotalSeconds - TCtimer.TotalSeconds; //ticks/seconds, something = 0 in idle state
 
                 if (TCactive) //Activated, sets timer to 5, keeps tractionTimer updated as long as button is held, starts the 5 second count-up when released
                 {
                     TCOffTimer = 5;
-                    TCtimer = globalClock;
+                    TCtimer = Globals.globalClock;
                     TCLimiter = true;
                 }
 
-                if (globalClock.TotalSeconds - TCtimer.TotalSeconds > 5) //Ends the 5 second count-up 
+                if (Globals.globalClock.TotalSeconds - TCtimer.TotalSeconds > 5) //Ends the 5 second count-up 
                 {
                     TCLimiter = false;
                 }
@@ -2525,7 +2500,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
 
 
-                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0) && TCrpm * 0.995 > rpm && rpm < 0.98 * revLim && speed < 200 && rpm > idleRPM * 1.3)
+                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || Globals.trackLocation == 0) && TCrpm * 0.995 > rpm && rpm < 0.98 * revLim && speed < 200 && rpm > idleRPM * 1.3)
                 {
                     TCon = true;
                     TCthrottle = throttle;
@@ -2548,7 +2523,7 @@ namespace DahlDesign.Plugin.iRacing
                 }
 
                 //Running wheel slip through the filter
-                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (((TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || trackLocation == 0)) || (slipLF == 100 || slipRF == 100)))
+                if (!tcBump && TCreleaseCD == 0 && gear == TCgear && TCdropCD == 0 && (((TCthrottle < throttle || TCthrottle == 100 && throttle == 100) && (throttle > 30 || Globals.trackLocation == 0)) || (slipLF == 100 || slipRF == 100)))
                 {
                     Base.SetProp("SlipLF", slipLF);
                     Base.SetProp("SlipRF", slipRF);
@@ -3084,7 +3059,7 @@ namespace DahlDesign.Plugin.iRacing
                 pitBox = -((1 - pitLocation) + trackPosition) * trackLength;
             }
 
-            awayFromPits = -pitBox;
+            Globals.awayFromPits = -pitBox;
 
             if (pitBox > -8 && pitBox < 33 && pit == 1 && pitStall != 1 && hasPitted == true) //Car is approaching the pit box, and can pass by 8 meters. 
             {
@@ -3112,8 +3087,7 @@ namespace DahlDesign.Plugin.iRacing
                 currentRearWing = wingRear;
                 currentPWS = PWS;
                 currentTape = tape;
-                offTrack = false;
-                offTrackTimer = globalClock;
+                Base.OffTrack.Initialize();
             }
             if (pit == 0)
             {
@@ -3874,8 +3848,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     if (Globals.sessionState < 4)
                     {
-                        offTrack = false;
-                        offTrackTimer = globalClock;
+                        Base.OffTrack.Initialize();
                         timeLeftSeconds = totalSessionTime;
                         if (trackPosition > 0.5 || trackPosition == 0)
                         {
@@ -5066,10 +5039,10 @@ namespace DahlDesign.Plugin.iRacing
                 //Several conditions where stint timer will reset
                 if (iRIdle || pitBox > 0 || (session == "Race" && Globals.sessionState < 4) || (session == "Offline Testing" && pit == 1) || pushTimer.TotalHours > 10)
                 {
-                    stintTimer = globalClock;
+                    stintTimer = Globals.globalClock;
                 }
 
-                pushTimer = TimeSpan.FromMilliseconds(globalClock.TotalMilliseconds - stintTimer.TotalMilliseconds);
+                pushTimer = TimeSpan.FromMilliseconds(Globals.globalClock.TotalMilliseconds - stintTimer.TotalMilliseconds);
 
                 Base.SetProp("StintTimer", pushTimer);
 
@@ -5882,7 +5855,7 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             if (!realGapLocks[distIndex][i] && !realGapChecks[distIndex][i])  //Car arriving at unchecked, closed gate. Opening, snapshotting global clock, setting check. Unchecking previous gate. 
                             {
-                                realGapPoints[distIndex][i] = globalClock;
+                                realGapPoints[distIndex][i] = Globals.globalClock;
                                 realGapLocks[distIndex][i] = true;
                                 realGapChecks[distIndex][i] = true;
                                 realGapChecks[distPrevIndex][i] = false;
@@ -5890,7 +5863,7 @@ namespace DahlDesign.Plugin.iRacing
 
                             if (realGapLocks[myDistIndex][i]) //If I just arrived at an open gate , close it and post delta.
                             {
-                                double delta = realGapPoints[myDistIndex][i].TotalSeconds - globalClock.TotalSeconds;
+                                double delta = realGapPoints[myDistIndex][i].TotalSeconds - Globals.globalClock.TotalSeconds;
 
                                 realGapOpponentRelative[i] = delta;
 
@@ -5913,7 +5886,7 @@ namespace DahlDesign.Plugin.iRacing
                         {
                             if (!realGapLocks[myDistIndex][i] && !realGapChecks[myDistIndex][i]) //If I just arrived at a unchecked, closed gate, open and snapshot global clock, checking. Unchecking previous gate.
                             {
-                                realGapPoints[myDistIndex][i] = globalClock;
+                                realGapPoints[myDistIndex][i] = Globals.globalClock;
                                 realGapLocks[myDistIndex][i] = true;
                                 realGapChecks[myDistIndex][i] = true;
                                 realGapChecks[myPrevIndex][i] = false;
@@ -5924,7 +5897,7 @@ namespace DahlDesign.Plugin.iRacing
 
                             if (realGapLocks[distIndex][i]) //If car just arrived at an open gate, close it and post delta. 
                             {
-                                double delta = globalClock.TotalSeconds - realGapPoints[distIndex][i].TotalSeconds;
+                                double delta = Globals.globalClock.TotalSeconds - realGapPoints[distIndex][i].TotalSeconds;
 
                                 realGapOpponentRelative[i] = delta;
 
@@ -5982,7 +5955,7 @@ namespace DahlDesign.Plugin.iRacing
                 ERSstartingLap = true;
                 TCon = false;
                 TCduration = 0;
-                offTrack = false;
+                Base.OffTrack.Initialize();
                 commandMinFuel = 0;
                 commandMaxFuel = 500;
                 LEDwarningActive = false;
