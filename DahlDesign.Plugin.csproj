@@ -156,6 +156,7 @@
     <Compile Include="Sections\SmoothGear.cs" />
     <Compile Include="Sections\Acceleration.cs" />
     <Compile Include="Sections\Radio.cs" />
+    <Compile Include="Sections\SoFandIRating.cs" />
     <Compile Include="iRacing\Models\Tracks.cs" />
     <Compile Include="iRacing\TrackInfos.cs" />
   </ItemGroup>

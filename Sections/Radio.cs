@@ -39,6 +39,9 @@ namespace DahlDesign.Plugin.Categories
         /// </summary>
         public override void DataUpdate()
         {
+            if (GameDataAll.GameName != "IRacing")
+                return;
+
             if (IRData.Telemetry.RadioTransmitCarIdx != -1)
             {
                 radioName = IRData.SessionData.DriverInfo.Drivers[IRData.Telemetry.RadioTransmitCarIdx].UserName;

@@ -24,6 +24,7 @@ namespace DahlDesign.Plugin
         public SmoothGear SmoothGear;
         public Acceleration Acceleration;
         public Radio Radio;
+        public SofandIRating SofandIRating;
         public int counter = 0;
         public ImageSource PictureIcon => this.ToIcon(Properties.Resources.Dahl_icon);
         public string LeftMenuTitle => "Dahl Design";
@@ -49,6 +50,7 @@ namespace DahlDesign.Plugin
             iRacing = new iRacing.Data(this);
             SmoothGear = new SmoothGear(this);
             Radio = new Radio(this);
+            SofandIRating  = new SofandIRating(this);
             
 
             InitSections();
@@ -71,6 +73,7 @@ namespace DahlDesign.Plugin
             Sections.Add(SmoothGear);
             Sections.Add(new Acceleration(this));
             Sections.Add(Radio);
+            Sections.Add(SofandIRating);
 
             sectionsAreDirty = false;
         }

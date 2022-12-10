@@ -22,7 +22,7 @@ namespace DahlDesign.Plugin.iRacing
         string myClassColor = "";
         int myClassColorIndex = 0;
 
-        double SoF = 0;
+    
         int DRSleft = 0;
         string DRSpush = "";
 
@@ -188,7 +188,7 @@ namespace DahlDesign.Plugin.iRacing
         bool stintLapsCheck = false;
 
         int qualyPosition = 0;
-        bool raceFinished = false;
+        
 
         double? aheadGap = 0;
         string aheadClass = "";
@@ -220,10 +220,6 @@ namespace DahlDesign.Plugin.iRacing
 
         double pace = 0;
         double? remainingLaps = 0;
-
-        int myIR = 0;
-        double IRchange = 0;
-
         bool jokerThisLap = false;
         int jokerLapCount = 0;
         bool jokerLapChecker = false;
@@ -469,9 +465,9 @@ namespace DahlDesign.Plugin.iRacing
             Base.AttachDelegate("TestProperty", () => TCreleaseCD != 0);
             Base.AttachDelegate("Position", () => Globals.realPosition);
             Base.AttachDelegate("HotLapPosition", () => hotLapPosition);
-            Base.AttachDelegate("RaceFinished", () => raceFinished);
-            Base.AttachDelegate("SoF", () => SoF);
-            Base.AttachDelegate("IRchange", () => IRchange);
+            Base.AttachDelegate("RaceFinished", () => Globals.raceFinished);
+     
+  
             Base.AttachDelegate("MyClassColor", () => myClassColor);
 
             Base.AttachDelegate("CenterDashType", () => dashType);
@@ -1114,7 +1110,7 @@ namespace DahlDesign.Plugin.iRacing
             validStintLaps = 0;
             invalidStintLaps = 0;
             fuelTargetDeltaCumulative = 0;
-            raceFinished = false;
+            Globals.raceFinished = false;
             jokerThisLap = false;
             jokerLapChecker = false;
             finishedCars = new List<string> { };
@@ -1128,7 +1124,7 @@ namespace DahlDesign.Plugin.iRacing
             TCon = false;
             TCduration = 0;
             offTrack = false;
-            IRchange = 0;
+
 
             //Props that need refresh
             Base.SetProp("TCActive", false);
@@ -1296,7 +1292,7 @@ namespace DahlDesign.Plugin.iRacing
             double fuel = GameData.Fuel;                                                        //Fuel on tank
 
             IRData.Telemetry.TryGetValue("SessionState", out object rawSessionState);
-            int sessionState = Convert.ToInt32(rawSessionState);                                    //Session State
+            Globals.sessionState = Convert.ToInt32(rawSessionState);                                    //Session State
 
             IRData.Telemetry.TryGetValue("PlayerTrackSurface", out object rawtrackLocation);
             int trackLocation = Convert.ToInt32(rawtrackLocation);                                  //TrkLoc
@@ -1388,74 +1384,11 @@ namespace DahlDesign.Plugin.iRacing
             repairTog = Convert.ToBoolean(pitInfo & 64);
 
 
-            //----------------------------------------------
-            //--------SoF AND IR LOSS/GAIN------------------
-            //----------------------------------------------
-
-            if (Base.counter == 8)
-            {
-                List<double?> iratings = new List<double?> { };
-                double weight = 1600 / Math.Log(2);
-                double posCorr = (classOpponents / 2 - Globals.realPosition) / 100;
-
-                for (int i = 0; i < opponents; i++)
-                {
-                    if (GameData.Opponents[i].CarClass == myClass)
-                    {
-                        iratings.Add(GameData.Opponents[i].IRacing_IRating);
-                    }
-                    else
-                    {
-                        iratings.Add(0);
-                    }
-                }
-
-                List<double> filtered = new List<double> { };
-                double valueHolder = 0;
-
-                for (int a = 0; a < iratings.Count; a++)
-                {
-                    valueHolder = Convert.ToDouble(iratings[a]);
-                    if (valueHolder != 0)
-                    {
-                        filtered.Add(valueHolder);
-                    }
-                }
-
-                double sum = 0;
-                double IRscore = 0;
-
-                if (filtered.Count >= classOpponents)
-                {
-                    for (int e = 0; e < classOpponents; e++)
-                    {
-                        sum += Math.Pow(2, -filtered[e] / 1600);
-                        IRscore += (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight) / ((1 - Math.Exp(-filtered[e] / weight)) * Math.Exp(-myIR / weight) + (1 - Math.Exp(-myIR / weight)) * Math.Exp(-filtered[e] / weight));
-                    }
-                }
-
-                if (IRscore != 0)
-                {
-                    IRscore = IRscore - 0.5;
-                }
-
-                SoF = 0;
-
-                if (sum != 0)
-                {
-                    SoF = Math.Round(weight * Math.Log(classOpponents / sum));
-                    if (session == "Race" && !raceFinished && sessionState > 3)
-                    {
-                        IRchange = Math.Round((classOpponents - Globals.realPosition - IRscore - posCorr) * 200 / classOpponents);
-                    }
-
-                }
-            }
 
             //----------------------------------------------
             //--------OFF TRACK REGISTRATION----------------
             //----------------------------------------------
-            if ((session == "Race" || session == "Practice" || session == "Open Qualify") && sessionState > 3)
+            if ((session == "Race" || session == "Practice" || session == "Open Qualify") && Globals.sessionState > 3)
             {
                 if ((trackLocation != 0 && !(pit != 1 && speed < 10) && !(awayFromPits > 2 && stintLength < 400 && stintLength > 20)) || ((currentLap == 1 || currentLap == 0) && stintLength < 400 && session == "Race"))
                 {
@@ -2097,7 +2030,7 @@ namespace DahlDesign.Plugin.iRacing
                     {
                         myClassColor = IRData.SessionData.DriverInfo.CompetingDrivers[i].CarClassColor;
                         myClassColorIndex = classColors.IndexOf(myClassColor);
-                        myIR = Convert.ToInt32(IRData.SessionData.DriverInfo.CompetingDrivers[i].IRating);
+                        Globals.myIR = Convert.ToInt32(IRData.SessionData.DriverInfo.CompetingDrivers[i].IRating);
                         break;
                     }
                 }
@@ -3711,7 +3644,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     if (checkered == 1 && ((trackPosition > 0.1 && trackPosition < 0.15) || (currentLapTime.TotalSeconds > 5 && currentLapTime.TotalSeconds < 10)))
                     {
-                        raceFinished = true;
+                        Globals.raceFinished = true;
                     }
                     if ((lapRaceFinished || timeRaceFinished)) //Identify all cars with one lap more finished - keep in list, cannot decrement if players DC. 
                     {
@@ -3737,7 +3670,7 @@ namespace DahlDesign.Plugin.iRacing
                         Globals.realPosition = 1 + finishedCars.Count;
                     }
 
-                    if (raceFinished)
+                    if (Globals.raceFinished)
                     {
                         Globals.realPosition = myPosition;
                     }
@@ -3939,7 +3872,7 @@ namespace DahlDesign.Plugin.iRacing
                 {
                     leaderDecimal = 0;
 
-                    if (sessionState < 4)
+                    if (Globals.sessionState < 4)
                     {
                         offTrack = false;
                         offTrackTimer = globalClock;
@@ -4817,7 +4750,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 int truncRemainingLaps = ((int)(remainingLaps * 100)) / 100;
 
-                if (sessionState < 4 && trackPosition == 0 && isLapLimited && !isTimeLimited) //When standing on grid and track position is not updated yet. 
+                if (Globals.sessionState < 4 && trackPosition == 0 && isLapLimited && !isTimeLimited) //When standing on grid and track position is not updated yet. 
                 {
                     truncRemainingLaps--;
                 }
@@ -5017,7 +4950,7 @@ namespace DahlDesign.Plugin.iRacing
 
                     TimeSpan slowestLapTimeSpan = TimeSpan.FromSeconds(slowestLapTime);
 
-                    if (raceFinished)
+                    if (Globals.raceFinished)
                     {
                         fuelDelta = 0;
                     }
@@ -5049,10 +4982,10 @@ namespace DahlDesign.Plugin.iRacing
 
                         //Stint calculations
 
-                        if ((lapTimeList[0].TotalSeconds == 0 && pit == 0) || pitBox > 0 || (session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1)) //Update values only when in box, on grid or at end of pit lane for qualy laps. 
+                        if ((lapTimeList[0].TotalSeconds == 0 && pit == 0) || pitBox > 0 || (session == "Race" && Globals.sessionState == 2) || (session == "Lone Qualify" && pit == 1)) //Update values only when in box, on grid or at end of pit lane for qualy laps. 
                         {
                             stintLapsTotal = latestPitLap - currentLap - 1; //Laps remaining of the stint
-                            if ((session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1) || (lapTimeList[0].TotalSeconds == 0 && pit == 0))
+                            if ((session == "Race" && Globals.sessionState == 2) || (session == "Lone Qualify" && pit == 1) || (lapTimeList[0].TotalSeconds == 0 && pit == 0))
                             {
                                 stintLapsTotal++;
                             }
@@ -5061,12 +4994,12 @@ namespace DahlDesign.Plugin.iRacing
                                 stintLapsTotal = truncRemainingLaps;
                             }
 
-                            if (pitLocation > 0.8 && !(session == "Race" && sessionState == 2) && !(session == "Lone Qualify" && pit == 1))
+                            if (pitLocation > 0.8 && !(session == "Race" && Globals.sessionState == 2) && !(session == "Lone Qualify" && pit == 1))
                             {
                                 stintLapsTotal--;
                             }
                             stintTimeTotal = TimeSpan.FromSeconds((stintLapsTotal + 2) * myExpectedLapTime);
-                            if ((session == "Race" && sessionState == 2) || (session == "Lone Qualify" && pit == 1))
+                            if ((session == "Race" && Globals.sessionState == 2) || (session == "Lone Qualify" && pit == 1))
                             {
                                 stintTimeTotal = TimeSpan.FromSeconds(stintLapsTotal * myExpectedLapTime);
                             }
@@ -5088,7 +5021,7 @@ namespace DahlDesign.Plugin.iRacing
                             {
                                 stintTimeTotal = TimeSpan.FromSeconds(stintTimeTotal.TotalSeconds);
                             }
-                            if (sessionState > 4) //If session is ending
+                            if (Globals.sessionState > 4) //If session is ending
                             {
                                 stintTimeTotal = new TimeSpan(0);
                                 stintLapsTotal = 0;
@@ -5131,7 +5064,7 @@ namespace DahlDesign.Plugin.iRacing
             if (Base.counter == 7 || Base.counter == 22 || Base.counter == 37 || Base.counter == 52)
             {
                 //Several conditions where stint timer will reset
-                if (iRIdle || pitBox > 0 || (session == "Race" && sessionState < 4) || (session == "Offline Testing" && pit == 1) || pushTimer.TotalHours > 10)
+                if (iRIdle || pitBox > 0 || (session == "Race" && Globals.sessionState < 4) || (session == "Offline Testing" && pit == 1) || pushTimer.TotalHours > 10)
                 {
                     stintTimer = globalClock;
                 }
@@ -5909,7 +5842,7 @@ namespace DahlDesign.Plugin.iRacing
                 myPrevIndex = 0;
             }
 
-            if (sessionState == 4 && BestLapTimes != null)
+            if (Globals.sessionState == 4 && BestLapTimes != null)
             {
                 for (int i = 0; i < 64; i++)
                 {
@@ -6036,7 +5969,7 @@ namespace DahlDesign.Plugin.iRacing
                 validStintLaps = 0;
                 invalidStintLaps = 0;
                 fuelTargetDeltaCumulative = 0;
-                raceFinished = false;
+                Globals.raceFinished = false;
                 jokerThisLap = false;
                 jokerLapChecker = false;
                 finishedCars = new List<string> { };
@@ -6064,7 +5997,7 @@ namespace DahlDesign.Plugin.iRacing
                 {
                     findLapRecord = true;
                     csvIndex = 0;
-                    IRchange = 0;
+                    Base.SofandIRating.Initialize();
                     ERSChangeCount = 4;
                     savePitTimerLock = false;
                     savePitTimerSnap = new TimeSpan(0);
