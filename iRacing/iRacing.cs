@@ -1327,9 +1327,7 @@ namespace DahlDesign.Plugin.iRacing
             {
                 myDRSCount = 0;
             }
-
-            var estimatedLapTime = (TimeSpan)(Base.GetProp("PersistantTrackerPlugin.EstimatedLapTime")); //EstimatedLapTime
-
+          
             if (GameData.OpponentsAheadOnTrack.Count > 0)
             {
                 aheadGap = GameData.OpponentsAheadOnTrack[0].GaptoPlayer;                       //Ahead GAP
@@ -2949,35 +2947,6 @@ namespace DahlDesign.Plugin.iRacing
 
                     fuelTargetDeltaCumulative = fuelTargetDeltaCumulative + fuelTargetDelta;
                 }
-            }
-
-            //----------------------------------------------------
-            //------------Hotlap live position--------------------
-            //----------------------------------------------------
-
-            if (Base.counter == 17)
-            {
-                int position = 0;
-                for (int i = 0; i < opponents; i++)
-                {
-                    if (estimatedLapTime.TotalSeconds > 0 && GameData.Opponents[i].BestLapTime.TotalSeconds > 0 && estimatedLapTime.TotalSeconds > GameData.Opponents[i].BestLapTime.TotalSeconds && GameData.Opponents[i].CarClass == myClass && !GameData.Opponents[i].IsPlayer)
-                    {
-                        position++;
-                    }
-
-                }
-                if (opponents > 1 && !(session == "Race" && currentLap == 1))
-                {
-                    position++;
-                }
-
-                if (estimatedLapTime.TotalSeconds == 0)
-                {
-                    position = 0;
-                }
-
-                Base.SetProp("HotLapLivePosition", position);
-
             }
 
             //----------------------------------------------------

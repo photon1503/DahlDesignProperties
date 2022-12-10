@@ -27,6 +27,7 @@ namespace DahlDesign.Plugin
         public SofandIRating SofandIRating;
         public OffTrack OffTrack;
         public Stopwatch Stopwatch;
+        public HotLap HotLap;
         public int counter = 0;
         public ImageSource PictureIcon => this.ToIcon(Properties.Resources.Dahl_icon);
         public string LeftMenuTitle => "Dahl Design";
@@ -55,7 +56,7 @@ namespace DahlDesign.Plugin
             SofandIRating  = new SofandIRating(this);
             OffTrack  = new OffTrack(this);
             Stopwatch  = new Stopwatch(this);
-            
+            HotLap = new HotLap(this);
 
             InitSections();
         }
@@ -81,6 +82,7 @@ namespace DahlDesign.Plugin
             Sections.Add(SofandIRating);
             Sections.Add(OffTrack);
             Sections.Add(Stopwatch);
+            Sections.Add(HotLap);
 
             sectionsAreDirty = false;
         }
