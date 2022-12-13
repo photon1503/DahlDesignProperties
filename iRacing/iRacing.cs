@@ -149,8 +149,6 @@ namespace DahlDesign.Plugin.iRacing
         List<double?> carAheadRealGap = new List<double?> { };
         List<double?> carAheadRealRelative = new List<double?> { };
 
-        string aheadGlobal = "";
-
         List<double?> carBehindRelative = new List<double?> { };
         List<double?> carBehindGap = new List<double?> { };
         List<string> carBehindName = new List<string> { };
@@ -3587,7 +3585,7 @@ namespace DahlDesign.Plugin.iRacing
 
                 double? aheadGap = 0;
                 string aheadName = "";
-                aheadGlobal = aheadName;
+                aheadGlobal = Globals.aheadName;
                 TimeSpan aheadLastLap = new TimeSpan(0);
                 TimeSpan aheadBestLap = new TimeSpan(0);
                 bool aheadIsConnected = false;
@@ -4120,7 +4118,7 @@ namespace DahlDesign.Plugin.iRacing
                         Base.SetProp("AheadP2PCount", aheadP2PCount);
                         Base.SetProp("AheadRealGap", aheadRealGap);
 
-                        aheadGlobal = aheadName;
+                        Globals.aheadGlobal = aheadName;
 
                     }
 
